@@ -42,7 +42,7 @@ void PhysicsScene::simulate(float delta, float round_time)
 	}
 }
 
-const std::shared_ptr<PhysicActor>& PhysicsScene::create_actor(const std::weak_ptr<GameEntity>& owner)
+const std::shared_ptr<PhysicActor>& PhysicsScene::create_actor(const std::weak_ptr<IGameEntity>& owner)
 {
 	m_actors.push_back(std::make_shared<PhysicActor>(g_Game->physic_scene(), owner));
 	return m_actors.back();

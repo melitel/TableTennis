@@ -6,7 +6,7 @@
 #include "Sector.h"
 #include "PhysicActor.h"
 
-class GameEntity;
+class IGameEntity;
 
 class PhysicsScene
 {
@@ -14,7 +14,7 @@ public:
 	void initialize(int width, int height);
 	void update(float delta, float round_time);
 	void simulate(float delta, float round_time);
-	const std::shared_ptr<PhysicActor>& create_actor(const std::weak_ptr<GameEntity>& owner);
+	const std::shared_ptr<PhysicActor>& create_actor(const std::weak_ptr<IGameEntity>& owner);
 	void collision_processing(const std::shared_ptr<PhysicActor>& actor);
 private:
 

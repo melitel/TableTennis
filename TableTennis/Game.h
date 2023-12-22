@@ -1,6 +1,7 @@
 #pragma once
 #include "Logger.h"
 #include "PhysicsScene.h"
+#include "IGameEntity.h"
 #include "GameEntity.h"
 #include "Player.h"
 #include "Ball.h"
@@ -49,7 +50,7 @@ private:
 	const sf::Color m_sprite_color{ 255, 255, 255 };	
 
 	static std::unique_ptr<sf::RenderWindow> m_window;
-	std::vector<std::shared_ptr<GameEntity>> m_entities;
+	std::vector<std::shared_ptr<IGameEntity>> m_entities;
 	sf::RectangleShape border;
 	
 	sf::Text m_score_text;

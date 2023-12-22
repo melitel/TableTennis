@@ -115,7 +115,11 @@ void Game::update()
 	{
 		m_score_text.setFillColor(sf::Color::Green);
 		for (auto& entity : m_entities) {
-			entity->update(delta, m_round_time.count());
+
+			if (MovableEntity* mov_ent = entity->asMovableEntity()) {
+				mov_ent->update(delta, m_round_time.count());
+			}
+			//entity->update(delta, m_round_time.count());
 		}
 
 		//m_ball_sprite.update(delta, m_round_time.count());

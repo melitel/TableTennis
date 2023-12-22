@@ -7,13 +7,13 @@
 #include "Math.h"
 
 class PhysicsScene;
-class GameEntity;
+class IGameEntity;
 
 class PhysicActor
 {
 public:
 
-	PhysicActor(std::weak_ptr<PhysicsScene> scene, std::weak_ptr<GameEntity> owner) : m_scene(scene), m_owner(owner) {}
+	PhysicActor(std::weak_ptr<PhysicsScene> scene, std::weak_ptr<IGameEntity> owner) : m_scene(scene), m_owner(owner) {}
 
 	enum motion_type {
 		kinematic,
@@ -84,7 +84,7 @@ public:
 
 private:
 	std::weak_ptr<PhysicsScene> m_scene;
-	std::weak_ptr<GameEntity> m_owner;
+	std::weak_ptr<IGameEntity> m_owner;
 	motion_type m_motion_type;
 	std::variant <Rectangle, Circle> m_shapeVariant;
 	shape_type m_shape_type;
