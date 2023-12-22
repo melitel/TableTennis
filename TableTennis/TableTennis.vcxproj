@@ -89,25 +89,31 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="GameEntity.cpp" />
+    <ClCompile Include="MovableEntity.cpp" />
     <ClCompile Include="Sector.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameEntity.cpp" />
+    <ClCompile Include="IGameEntity.cpp" />
     <ClCompile Include="PhysicActor.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PhysicsScene.cpp" />
+    <ClCompile Include="StaticEntity.cpp" />
     <ClCompile Include="TableTennis.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
+    <ClInclude Include="GameEntity.h" />
+    <ClInclude Include="MovableEntity.h" />
     <ClInclude Include="Sector.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GameEntity.h" />
+    <ClInclude Include="IGameEntity.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="PhysicActor.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PhysicsScene.h" />
+    <ClInclude Include="StaticEntity.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

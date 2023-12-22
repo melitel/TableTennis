@@ -11,11 +11,12 @@ extern Game* g_Game;
 void Ball::initialize()
 {
 	//m_velocity = reset_ball({ 1.f, 0.f });
-	m_ball_shape.setFillColor(sprite_color);
+	m_speed = 0.f;
+	m_ball_shape.setFillColor(m_sprite_color);
 	m_ball_shape.setRadius(m_ball_radius);
-	m_ball_shape.setPosition(m_ball_position);
+	m_ball_shape.setPosition(m_position);
 	m_physicActor = g_Game->create_physic_actor(m_entity_id);
-	m_physicActor->initialize(m_ball_position, m_velocity, PhysicActor::motion_type::dynamic, PhysicActor::shape_type::circle, m_ball_radius);
+	m_physicActor->initialize(m_position, m_velocity, PhysicActor::motion_type::dynamic, PhysicActor::shape_type::circle, m_ball_radius);
 }
 
 void Ball::draw(std::unique_ptr<sf::RenderWindow>& window)
@@ -26,16 +27,16 @@ void Ball::draw(std::unique_ptr<sf::RenderWindow>& window)
 void Ball::update(float delta, float round_time)
 {
 	//ball_collision_processing(delta);
-	object_move(delta, round_time);
+	move(delta, round_time);
 }
 
-void Ball::object_move(float delta, float round_time)
+void Ball::move(float delta, float round_time)
 {
 	uint32_t n = uint32_t(round_time / m_ball_speed_step_duration);
-	m_ball_speed = m_ball_starting_speed + m_ball_speed_step * n;
+	m_speed = m_ball_starting_speed + m_ball_speed_step * n;
 
 	//sf::Vector2f p0 = m_ball_shape.getPosition();
-	sf::Vector2f vel = m_physicActor->get_velocity() * m_ball_speed;
+	sf::Vector2f vel = m_physicActor->get_velocity() * m_speed;
 	//sf::Vector2f p1 = p0 + delta * vel;
 	m_physicActor->set_velocity(vel);
 	//m_ball_shape.setPosition(p1);
