@@ -1,6 +1,7 @@
 #include "Game.h"
 #include<iostream>
 
+Game* g_Game = nullptr;
 std::unique_ptr<sf::RenderWindow> Game::m_window = nullptr;
 
 void Game::run()
@@ -36,25 +37,36 @@ void Game::run()
 	}
 }
 
+std::shared_ptr<PhysicActor> Game::create_physic_actor(uint32_t entity_id)
+{
+	return m_physics_scene->create_actor(m_entities[entity_id]);
+}
+
 void Game::initialize()
 {
+	g_Game = this;
+	m_physics_scene = std::make_shared<PhysicsScene>();
 	m_window->setVerticalSyncEnabled(true);
 	m_start_time = std::chrono::system_clock::now();
 	// clear the window with black color
 	m_window->clear(sf::Color::Black);
 	m_game_status = game_status::pause;
 
-	m_physics_scene.initialize(m_window_width, m_window_height - m_header_height);
+	m_entities.emplace_back(std::make_shared<Player>(sf::Vector2f(100.f, 340.f), m_entities.size()));
+	m_entities.emplace_back(std::make_shared<Ball>(sf::Vector2f(350.f, 400.f), m_entities.size()));
+	m_entities.emplace_back(std::make_shared<Wall>(sf::Vector2f(0.f, 102.f), m_entities.size()));
+	m_entities.emplace_back(std::make_shared<Wall>(sf::Vector2f(0.f, 699.f), m_entities.size()));
+	
+	for (auto& entity : m_entities) {
+		entity->initialize();
+	}
+
+	m_physics_scene->initialize(m_window_width, m_window_height - m_header_height);
 
 	if (!m_font.loadFromFile("arial.ttf"))
 	{
 		int ii = 10;
-	}
-		
-	m_player_sprite.initialize();
-	m_ball_sprite.initialize();
-
-	//initialize second player or AI
+	}	
 
 	m_score_text.setFont(m_font);
 	m_score_text.setCharacterSize(40);
@@ -70,8 +82,9 @@ void Game::initialize()
 void Game::draw()
 {	
 	m_window->clear();
-	m_player_sprite.draw(m_window);
-	m_ball_sprite.draw(m_window);
+	for (auto& entity : m_entities) {
+		entity->draw(m_window);
+	}
 	m_window->draw(m_score_text);
 	m_window->draw(border);
 	m_window->display();
@@ -92,17 +105,6 @@ void Game::update()
 		m_round_time += m_dt;
 	}
 
-	//m_physics_scene.update(delta, m_round_time.count());
-	//m_ball_sprite.update(delta, m_round_time.count());
-	m_player_sprite.update(delta, m_round_time.count());
-
-	sf::Vector2f pos = m_player_sprite.get_position();
-	pos.y = std::clamp(pos.y, m_header_height, m_window_height - m_player_sprite.get_height());
-	m_player_sprite.set_position(pos);
-
-	//Add update for second player or Ai
-
-
 	m_score_text.setString(std::string("Score ") + std::to_string(m_player_score[p_left]) + " : " + std::to_string(m_player_score[p_right]));
 	
 	if (m_game_status == game_status::pause)
@@ -112,6 +114,21 @@ void Game::update()
 	else
 	{
 		m_score_text.setFillColor(sf::Color::Green);
+		for (auto& entity : m_entities) {
+			entity->update(delta, m_round_time.count());
+		}
+
+		//m_ball_sprite.update(delta, m_round_time.count());
+		//m_player_sprite.update(delta, m_round_time.count());
+		//Add update for second player or Ai
+
+		/* this is the check for player if he is within the bounding box
+			should be moved to Physics Scene*/
+		//sf::Vector2f pos = m_player_sprite.get_position();
+		//pos.y = std::clamp(pos.y, m_header_height, m_window_height - m_player_sprite.get_height());
+		//m_player_sprite.set_position(pos);
+
+		//m_physics_scene.update(delta, m_round_time.count());
 	}
 
 }
@@ -121,20 +138,16 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed, input_array&
 	if (key == sf::Keyboard::W) {
 		my_input_array[key_W] = isPressed;
 	}
-
-	if (key == sf::Keyboard::S) {
+	else if (key == sf::Keyboard::S) {
 		my_input_array[key_S] = isPressed;
 	}
-
-	if (key == sf::Keyboard::Up) {
+	else if (key == sf::Keyboard::Up) {
 		my_input_array[key_Up] = isPressed;
 	}
-
-	if (key == sf::Keyboard::Down) {
+	else if (key == sf::Keyboard::Down) {
 		my_input_array[key_Down] = isPressed;
 	}
-
-	if (key == sf::Keyboard::Space) {
+	else if (key == sf::Keyboard::Space) {
 		my_input_array[key_Pause] = isPressed;		
 	}	
 }
@@ -155,14 +168,14 @@ void Game::process_inputs(const input_array& my_input_array) {
 	{
 		if (!m_input_state[key_W] && my_input_array[key_W])
 		{
-			m_player_sprite.change_velocity(velocity_up);			
+			m_player_velocity_change = velocity_up;
 		}
 		else if (!my_input_array[key_S]) {
-			m_player_sprite.change_velocity(velocity_stop);
+			m_player_velocity_change = velocity_stop;
 		}
 		else if (my_input_array[key_S])
 		{
-			m_player_sprite.change_velocity(velocity_down);
+			m_player_velocity_change = velocity_down;
 		}
 	}
 
@@ -170,14 +183,14 @@ void Game::process_inputs(const input_array& my_input_array) {
 	{
 		if (!m_input_state[key_S] && my_input_array[key_S])
 		{
-			m_player_sprite.change_velocity(velocity_down);
+			m_player_velocity_change = velocity_down;
 		}
 		else if (!my_input_array[key_W]) {
-			m_player_sprite.change_velocity(velocity_stop);
+			m_player_velocity_change = velocity_stop;
 		}
 		else if (my_input_array[key_W])
 		{
-			m_player_sprite.change_velocity(velocity_up);
+			m_player_velocity_change = velocity_up;
 		}
 	}
 

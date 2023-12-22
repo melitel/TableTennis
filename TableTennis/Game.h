@@ -1,18 +1,27 @@
 #pragma once
 #include "Logger.h"
 #include "PhysicsScene.h"
+#include "GameEntity.h"
+#include "Player.h"
+#include "Ball.h"
+#include "Wall.h"
 
 class Game
 {
 public:
 	void run();
+	std::shared_ptr<PhysicActor> create_physic_actor(uint32_t entity_id);
+	float get_velocity_requested() const {
+		return m_player_velocity_change;
+	}
 
-private:
+	const std::shared_ptr<PhysicsScene>& physic_scene() const {
+		return m_physics_scene;
+	}
 
-	Ball m_ball_sprite;
-	Player m_player_sprite;
+private:	
 
-	PhysicsScene m_physics_scene;
+	std::shared_ptr<PhysicsScene> m_physics_scene;
 
 	enum input { key_W, key_S, key_Up, key_Down, key_Pause, key_count };
 	using input_array = std::array<bool, key_count>;
@@ -35,17 +44,16 @@ private:
 	float velocity_up = -1.f;
 	float velocity_down = 1.f;
 	float velocity_stop = 0.f;
+	float m_player_velocity_change = 0.f;
 
 	const sf::Color m_sprite_color{ 255, 255, 255 };	
 
 	static std::unique_ptr<sf::RenderWindow> m_window;
-	//sf::RenderWindow m_window{ sf::VideoMode(m_window_width, m_window_height), "Ping_pong" };
+	std::vector<std::shared_ptr<GameEntity>> m_entities;
 	sf::RectangleShape border;
 	
 	sf::Text m_score_text;
 	sf::Font m_font;
-	//sf::Vector2f m_velocity{ 1.f, 1.f };
-	//sf::Vector2f m_player2_velocity{ 0.f, 0.f };	
 	game_status m_game_status;
 	std::array<uint32_t, p_count> m_player_score{ 0 };
 
