@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Game.h"
+#include "DynamicActor.h"
 
 extern Game* g_Game;
 
@@ -9,9 +10,10 @@ void Player::initialize()
 	m_player_shape.setSize(sf::Vector2f(m_player_width, m_player_height));
 	m_player_shape.setFillColor(m_sprite_color);
 	m_player_shape.setPosition(m_position);
-	m_physicActor = g_Game->create_physic_actor(m_entity_id);
-	m_physicActor->initialize(
-		m_position, m_velocity, PhysicActor::motion_type::kinematic,
+	m_physicActor = g_Game->create_dynamic_actor(m_entity_id);
+	DynamicActor* dynactor = (DynamicActor*)m_physicActor.get();
+	dynactor->initialize(
+		m_position, m_velocity, false,
 		PhysicActor::shape_type::rectangle, 
 		sf::Vector2f(m_player_width, m_player_height));
 }

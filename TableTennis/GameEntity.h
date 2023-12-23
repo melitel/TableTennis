@@ -12,7 +12,7 @@ public:
 	void draw(std::unique_ptr<sf::RenderWindow>& window) override;
 
 protected:
-	std::shared_ptr<PhysicActor> m_physicActor;
+	std::shared_ptr<IPhysicActor> m_physicActor;
 	const sf::Color m_sprite_color{ 255, 255, 255 };	
 	sf::Vector2f m_position;
 	uint32_t m_entity_id;

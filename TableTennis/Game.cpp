@@ -37,9 +37,14 @@ void Game::run()
 	}
 }
 
-std::shared_ptr<PhysicActor> Game::create_physic_actor(uint32_t entity_id)
+std::shared_ptr<IPhysicActor> Game::create_dynamic_actor(uint32_t entity_id)
 {
-	return m_physics_scene->create_actor(m_entities[entity_id]);
+	return m_physics_scene->create_dynamic_actor(m_entities[entity_id]);
+}
+
+std::shared_ptr<IPhysicActor> Game::create_static_actor(uint32_t entity_id)
+{
+	return m_physics_scene->create_static_actor(m_entities[entity_id]);
 }
 
 void Game::initialize()

@@ -89,7 +89,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="DynamicActor.cpp" />
     <ClCompile Include="GameEntity.cpp" />
+    <ClCompile Include="IPhysicActor.cpp" />
     <ClCompile Include="MovableEntity.cpp" />
     <ClCompile Include="Sector.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -97,13 +99,16 @@
     <ClCompile Include="PhysicActor.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PhysicsScene.cpp" />
+    <ClCompile Include="StaticActor.cpp" />
     <ClCompile Include="StaticEntity.cpp" />
     <ClCompile Include="TableTennis.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
+    <ClInclude Include="DynamicActor.h" />
     <ClInclude Include="GameEntity.h" />
+    <ClInclude Include="IPhysicActor.h" />
     <ClInclude Include="MovableEntity.h" />
     <ClInclude Include="Sector.h" />
     <ClInclude Include="Game.h" />
@@ -113,6 +118,7 @@
     <ClInclude Include="PhysicActor.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PhysicsScene.h" />
+    <ClInclude Include="StaticActor.h" />
     <ClInclude Include="StaticEntity.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
