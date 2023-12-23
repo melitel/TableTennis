@@ -11,7 +11,8 @@ class Game
 {
 public:
 	void run();
-	std::shared_ptr<PhysicActor> create_physic_actor(uint32_t entity_id);
+	std::shared_ptr<IPhysicActor> create_dynamic_actor(uint32_t entity_id);
+	std::shared_ptr<IPhysicActor> create_static_actor(uint32_t entity_id);
 	float get_velocity_requested() const {
 		return m_player_velocity_change;
 	}

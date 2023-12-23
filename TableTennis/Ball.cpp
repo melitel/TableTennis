@@ -1,4 +1,5 @@
 #include "Ball.h"
+#include "DynamicActor.h"
 #include <cmath>
 #include "Game.h"
 
@@ -15,8 +16,9 @@ void Ball::initialize()
 	m_ball_shape.setFillColor(m_sprite_color);
 	m_ball_shape.setRadius(m_ball_radius);
 	m_ball_shape.setPosition(m_position);
-	m_physicActor = g_Game->create_physic_actor(m_entity_id);
-	m_physicActor->initialize(m_position, m_velocity, PhysicActor::motion_type::dynamic, PhysicActor::shape_type::circle, m_ball_radius);
+	m_physicActor = g_Game->create_dynamic_actor(m_entity_id);
+	DynamicActor* dynactor = (DynamicActor*)m_physicActor.get();
+	dynactor->initialize(m_position, m_velocity, true, PhysicActor::shape_type::circle, m_ball_radius);
 }
 
 void Ball::draw(std::unique_ptr<sf::RenderWindow>& window)
@@ -32,13 +34,11 @@ void Ball::update(float delta, float round_time)
 
 void Ball::move(float delta, float round_time)
 {
+	DynamicActor* dynactor = (DynamicActor*)m_physicActor.get();
 	uint32_t n = uint32_t(round_time / m_ball_speed_step_duration);
 	m_speed = m_ball_starting_speed + m_ball_speed_step * n;
-
-	//sf::Vector2f p0 = m_ball_shape.getPosition();
-	sf::Vector2f vel = m_physicActor->get_velocity() * m_speed;
-	//sf::Vector2f p1 = p0 + delta * vel;
-	m_physicActor->set_velocity(vel);
+	sf::Vector2f vel = dynactor->get_velocity() * m_speed;
+	dynactor->set_velocity(vel);
 	//m_ball_shape.setPosition(p1);
 }
 

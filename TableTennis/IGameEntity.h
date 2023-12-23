@@ -14,6 +14,5 @@ public:
 	virtual MovableEntity* asMovableEntity() { return nullptr; }
 	virtual StaticEntity* asStaticEntity() { return nullptr; }
 	virtual ~IGameEntity() = default;
-
 };
 
