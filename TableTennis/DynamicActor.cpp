@@ -2,8 +2,8 @@
 #include <cassert>
 
 void DynamicActor::initialize(
-	sf::Vector2f pos, sf::Vector2f vel, bool isPureDynamic, shape_type shape,
-	const std::variant<sf::Vector2f, float>& size)
+	Vector2f pos, Vector2f vel, bool isPureDynamic, shape_type shape,
+	const std::variant<Vector2f, float>& size)
 {
 	m_position = pos;
 	m_velocity = vel;
@@ -11,7 +11,7 @@ void DynamicActor::initialize(
 	m_shape_type = shape;
 
 	if (m_shape_type == rectangle) {
-		sf::Vector2f rectangle_size = std::get<sf::Vector2f>(size);
+		Vector2f rectangle_size = std::get<Vector2f>(size);
 		m_shapeVariant = Rectangle{ rectangle_size.x , rectangle_size.y };
 	}
 	else if (m_shape_type == circle) {

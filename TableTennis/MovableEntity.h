@@ -7,7 +7,7 @@ class MovableEntity :
 {
 public:
 
-    MovableEntity(sf::Vector2f pos, uint32_t entity_id) : GameEntity(pos, entity_id) {}
+    MovableEntity(Vector2f pos, uint32_t entity_id) : GameEntity(pos, entity_id) {}
 
     virtual void update(float delta, float round_time);
     virtual void move(float delta, float round_time);
@@ -15,7 +15,7 @@ public:
 
 protected:
 
-    sf::Vector2f m_velocity{ 0.f, 0.f };
+    Vector2f m_velocity{ 0.f, 0.f };
     float m_speed = 0.f;
 };
 

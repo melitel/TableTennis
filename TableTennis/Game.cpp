@@ -1,5 +1,6 @@
 #include "Game.h"
 #include<iostream>
+#include <algorithm>
 
 Game* g_Game = nullptr;
 std::unique_ptr<sf::RenderWindow> Game::m_window = nullptr;
@@ -37,16 +38,6 @@ void Game::run()
 	}
 }
 
-std::shared_ptr<IPhysicActor> Game::create_dynamic_actor(uint32_t entity_id)
-{
-	return m_physics_scene->create_dynamic_actor(m_entities[entity_id]);
-}
-
-std::shared_ptr<IPhysicActor> Game::create_static_actor(uint32_t entity_id)
-{
-	return m_physics_scene->create_static_actor(m_entities[entity_id]);
-}
-
 void Game::initialize()
 {
 	g_Game = this;
@@ -57,16 +48,16 @@ void Game::initialize()
 	m_window->clear(sf::Color::Black);
 	m_game_status = game_status::pause;
 
-	m_entities.emplace_back(std::make_shared<Player>(sf::Vector2f(100.f, 340.f), m_entities.size()));
-	m_entities.emplace_back(std::make_shared<Ball>(sf::Vector2f(350.f, 400.f), m_entities.size()));
-	m_entities.emplace_back(std::make_shared<Wall>(sf::Vector2f(0.f, 102.f), m_entities.size()));
-	m_entities.emplace_back(std::make_shared<Wall>(sf::Vector2f(0.f, 699.f), m_entities.size()));
+	m_entities.emplace_back(std::make_shared<Player>(Vector2f(100.f, 340.f), m_entities.size()));
+	m_entities.emplace_back(std::make_shared<Ball>(Vector2f(350.f, 400.f), m_entities.size()));
+	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 100.f), m_entities.size()));
+	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 698.f), m_entities.size()));
 	
 	for (auto& entity : m_entities) {
 		entity->initialize();
 	}
 
-	m_physics_scene->initialize(m_window_width, m_window_height - m_header_height);
+	m_physics_scene->initialize(m_window_width, m_window_height);
 
 	if (!m_font.loadFromFile("arial.ttf"))
 	{
@@ -78,10 +69,6 @@ void Game::initialize()
 	m_score_text.setFillColor(m_sprite_color);
 	m_score_text.setPosition(sf::Vector2f(245.f, 25.f));
 	m_score_text.setString(std::string("Score ") + std::to_string (m_player_score[p_left]) + " : " + std::to_string(m_player_score[p_right]));
-
-	border.setSize(sf::Vector2f((float)m_window_width, 2.f));
-	border.setFillColor(m_sprite_color);
-	border.setPosition(sf::Vector2f(0.f, 100.f));
 }
 
 void Game::draw()
@@ -91,7 +78,6 @@ void Game::draw()
 		entity->draw(m_window);
 	}
 	m_window->draw(m_score_text);
-	m_window->draw(border);
 	m_window->display();
 }
 
@@ -104,7 +90,7 @@ void Game::update()
 	m_time = t;
 	m_total_time = t - m_start_time;
 
-	float delta = m_dt.count();
+	float delta = std::min(m_dt.count(), 0.0166f);
 	if (m_game_status != game_status::pause)
 	{
 		m_round_time += m_dt;
@@ -133,13 +119,28 @@ void Game::update()
 
 		/* this is the check for player if he is within the bounding box
 			should be moved to Physics Scene*/
-		//sf::Vector2f pos = m_player_sprite.get_position();
+		//Vector2f pos = m_player_sprite.get_position();
 		//pos.y = std::clamp(pos.y, m_header_height, m_window_height - m_player_sprite.get_height());
 		//m_player_sprite.set_position(pos);
 
-		//m_physics_scene.update(delta, m_round_time.count());
+		m_physics_scene->update(delta, m_round_time.count());
 	}
 
+}
+
+std::shared_ptr<IPhysicActor> Game::create_dynamic_actor(uint32_t entity_id)
+{
+	return m_physics_scene->create_dynamic_actor(m_entities[entity_id]);
+}
+
+std::shared_ptr<IPhysicActor> Game::create_static_actor(uint32_t entity_id)
+{
+	return m_physics_scene->create_static_actor(m_entities[entity_id]);
+}
+
+bool Game::overlap(const BoundingBox& bb, const std::shared_ptr<IPhysicActor>& ignore_actor, bool dynamic, bool stat)
+{
+	return m_physics_scene->overlap(bb, ignore_actor, dynamic, stat);
 }
 
 void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed, input_array& my_input_array)
@@ -237,5 +238,7 @@ void Game::process_inputs(const input_array& my_input_array) {
 	//	}
 	//}
 }
+
+
 
 

@@ -13,6 +13,7 @@ public:
 	void run();
 	std::shared_ptr<IPhysicActor> create_dynamic_actor(uint32_t entity_id);
 	std::shared_ptr<IPhysicActor> create_static_actor(uint32_t entity_id);
+	bool overlap(const BoundingBox& bb, const std::shared_ptr<IPhysicActor>& ignore_actor, bool dynamic, bool stat);
 	float get_velocity_requested() const {
 		return m_player_velocity_change;
 	}
@@ -32,7 +33,7 @@ private:
 	void draw();
 	void update();
 	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed, input_array& my_input_array);
-	void process_inputs(const input_array& my_input_array);
+	void process_inputs(const input_array& my_input_array);	
 
 	enum player { p_left, p_right, p_count };
 	

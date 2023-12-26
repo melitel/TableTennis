@@ -33,11 +33,11 @@ public:
 		}
 	};
 
-	void set_position(const sf::Vector2f& pos) override {
+	void set_position(const Vector2f& pos) override {
 		m_position = pos;
 	};
 
-	const sf::Vector2f& get_position() const override {
+	const Vector2f& get_position() const override {
 		return m_position;
 	};
 
@@ -46,6 +46,8 @@ public:
 	}
 
 	BoundingBox get_bounds() const override;
+
+	BoundingBox get_bounds(const Vector2f& pos) const override;
 	
 	void set_sector(int sector_id) override {
 		m_sectors.push_back(sector_id);
@@ -56,7 +58,7 @@ protected:
 	std::weak_ptr<IGameEntity> m_owner;
 	std::variant <Rectangle, Circle> m_shapeVariant;
 	shape_type m_shape_type;
-	sf::Vector2f m_position;	
+	Vector2f m_position;	
 	std::vector<int> m_sectors;
 };
 

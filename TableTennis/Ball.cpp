@@ -11,11 +11,11 @@ extern Game* g_Game;
 
 void Ball::initialize()
 {
-	//m_velocity = reset_ball({ 1.f, 0.f });
+	m_velocity = reset_ball({ -1.f, 0.f });
 	m_speed = 0.f;
 	m_ball_shape.setFillColor(m_sprite_color);
 	m_ball_shape.setRadius(m_ball_radius);
-	m_ball_shape.setPosition(m_position);
+	m_ball_shape.setPosition(vec2sfml(m_position));
 	m_physicActor = g_Game->create_dynamic_actor(m_entity_id);
 	DynamicActor* dynactor = (DynamicActor*)m_physicActor.get();
 	dynactor->initialize(m_position, m_velocity, true, PhysicActor::shape_type::circle, m_ball_radius);
@@ -23,6 +23,8 @@ void Ball::initialize()
 
 void Ball::draw(std::unique_ptr<sf::RenderWindow>& window)
 {
+	sf::Vector2f pos = vec2sfml(m_physicActor->get_position());
+	m_ball_shape.setPosition(pos);
 	window->draw(m_ball_shape);
 }
 
@@ -37,22 +39,21 @@ void Ball::move(float delta, float round_time)
 	DynamicActor* dynactor = (DynamicActor*)m_physicActor.get();
 	uint32_t n = uint32_t(round_time / m_ball_speed_step_duration);
 	m_speed = m_ball_starting_speed + m_ball_speed_step * n;
-	sf::Vector2f vel = dynactor->get_velocity() * m_speed;
+	Vector2f vel = dynactor->get_velocity_dir() * m_speed;
 	dynactor->set_velocity(vel);
-	//m_ball_shape.setPosition(p1);
 }
 
-sf::Vector2f Ball::reflect_ball(sf::Vector2f collision_type) const {
+Vector2f Ball::reflect_ball(Vector2f collision_type) const {
 
-	sf::Vector2f normal = collision_type;
-	sf::Vector2f reversed_move = -m_velocity;
-	sf::Vector2f reflected = reflect(reversed_move, normal);
-	reflected = normalize(reflected);
+	Vector2f normal = collision_type;
+	Vector2f reversed_move = -m_velocity;
+	Vector2f reflected = reflect(reversed_move, normal);
+	reflected = reflected.normalized();
 
 	return reflected;
 }
 
-sf::Vector2f Ball::reset_ball(sf::Vector2f velocity) {
+Vector2f Ball::reset_ball(Vector2f velocity) {
 		
 	int random = distr(gen);
 	float angle = ((m_ball_vel_sign ? -1 : 1) * 45.f) + random;
@@ -70,22 +71,10 @@ sf::Vector2f Ball::reset_ball(sf::Vector2f velocity) {
 	return velocity;
 }
 
-sf::Vector2f Ball::normalize(sf::Vector2f& vector) const {
-	float length = std::sqrt(vector.x * vector.x + vector.y * vector.y);
-
-	if (length != 0.0f) {
-		return sf::Vector2f(vector.x / length, vector.y / length);
-	}
-	else {
-		// Handle the case where the length is zero to avoid division by zero
-		return sf::Vector2f(0.0f, 0.0f);
-	}
-}
-
-float Ball::dot(const sf::Vector2f& v1, const sf::Vector2f& v2) const {
+float Ball::dot(const Vector2f& v1, const Vector2f& v2) const {
 	return v1.x * v2.x + v1.y * v2.y;
 }
 
-sf::Vector2f Ball::reflect(const sf::Vector2f& vector, const sf::Vector2f& normal) const {
+Vector2f Ball::reflect(const Vector2f& vector, const Vector2f& normal) const {
 	return 2.f * dot(normal, vector) * normal - vector;
 }

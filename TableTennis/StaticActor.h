@@ -6,7 +6,9 @@ class StaticActor :
 {
 public:
 
-	void initialize(sf::Vector2f pos,
-		const std::variant<sf::Vector2f, float>& size);
+	StaticActor(std::weak_ptr<PhysicsScene> scene, std::weak_ptr<IGameEntity> owner) : PhysicActor(scene, owner) {}
+
+	void initialize(Vector2f pos,
+		const std::variant<Vector2f, float>& size);
 };
 
