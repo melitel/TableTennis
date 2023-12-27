@@ -50,8 +50,8 @@ void Game::initialize()
 
 	m_entities.emplace_back(std::make_shared<Player>(Vector2f(100.f, 340.f), m_entities.size()));
 	m_entities.emplace_back(std::make_shared<Ball>(Vector2f(350.f, 400.f), m_entities.size()));
-	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 100.f), m_entities.size()));
-	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 698.f), m_entities.size()));
+	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 100.f), m_entities.size(), Wall::type::top));
+	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 698.f), m_entities.size(), Wall::type::bottom));
 	
 	for (auto& entity : m_entities) {
 		entity->initialize();
@@ -104,28 +104,26 @@ void Game::update()
 	}
 	else
 	{
+		// handle hits
+		std::vector<PhysicsScene::hit_info> hitInfos;
+		m_physics_scene->get_hit_info(hitInfos);
+		m_physics_scene->update(delta, m_round_time.count());
+		for (int i = 0; i < hitInfos.size(); i++) {
+			std::shared_ptr<IGameEntity> owner_entity =	hitInfos[i].actor->get_owner().lock();
+			if (owner_entity) {
+				owner_entity->onHit(hitInfos[i].normal);
+			}
+		}
+
 		m_score_text.setFillColor(sf::Color::Green);
+
 		for (auto& entity : m_entities) {
 
 			if (MovableEntity* mov_ent = entity->asMovableEntity()) {
 				mov_ent->update(delta, m_round_time.count());
-			}
-			//entity->update(delta, m_round_time.count());
-		}
-
-		//m_ball_sprite.update(delta, m_round_time.count());
-		//m_player_sprite.update(delta, m_round_time.count());
-		//Add update for second player or Ai
-
-		/* this is the check for player if he is within the bounding box
-			should be moved to Physics Scene*/
-		//Vector2f pos = m_player_sprite.get_position();
-		//pos.y = std::clamp(pos.y, m_header_height, m_window_height - m_player_sprite.get_height());
-		//m_player_sprite.set_position(pos);
-
-		m_physics_scene->update(delta, m_round_time.count());
+			}			
+		}		
 	}
-
 }
 
 std::shared_ptr<IPhysicActor> Game::create_dynamic_actor(uint32_t entity_id)
@@ -138,9 +136,19 @@ std::shared_ptr<IPhysicActor> Game::create_static_actor(uint32_t entity_id)
 	return m_physics_scene->create_static_actor(m_entities[entity_id]);
 }
 
-bool Game::overlap(const BoundingBox& bb, const std::shared_ptr<IPhysicActor>& ignore_actor, bool dynamic, bool stat)
+bool Game::overlap(const BoundingBox& bb, 
+	const std::shared_ptr<IPhysicActor>& ignore_actor, 
+	bool dynamic, bool stat,
+	std::vector<std::shared_ptr<IPhysicActor>>& actors_hit)
 {
-	return m_physics_scene->overlap(bb, ignore_actor, dynamic, stat);
+	return m_physics_scene->overlap(bb, ignore_actor, dynamic, stat, actors_hit);
+}
+
+void Game::reset_match(const std::shared_ptr<IPhysicActor>& actor, const Vector2f& vel, Game::player player_score)
+{
+	std::shared_ptr<IGameEntity> owner_entity = actor->get_owner().lock();
+	owner_entity->reset(vel);
+	m_player_score[player_score]++;
 }
 
 void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed, input_array& my_input_array)

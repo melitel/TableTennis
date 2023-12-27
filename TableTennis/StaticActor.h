@@ -9,6 +9,6 @@ public:
 	StaticActor(std::weak_ptr<PhysicsScene> scene, std::weak_ptr<IGameEntity> owner) : PhysicActor(scene, owner) {}
 
 	void initialize(Vector2f pos,
-		const std::variant<Vector2f, float>& size);
+		const std::variant<Vector2f, float>& size, const Vector2f& hit_normal);
 };
 

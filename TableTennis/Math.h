@@ -56,6 +56,16 @@ struct Vector2f {
 			return Vector2f(0.0f, 0.0f);
 		}
 	}
+
+	float dot(const Vector2f& vec) const {
+		return x * vec.x + y * vec.y;
+	}
+
+	Vector2f reflect(const Vector2f& normal) const {
+		float dotp = dot(normal) * 2.f;
+
+		return normal * dotp - *this;
+	}
 };
 
 struct BoundingBox {

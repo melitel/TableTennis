@@ -28,6 +28,9 @@ public:
 
 	struct Circle {
 		float radius;
+		float get_radius() const {
+			return radius;
+		}
 		BoundingBox calculate_bbox() const {
 			return BoundingBox(Vector2f(0.f, 0.f), Vector2f(2.f * radius, 2.f * radius));
 		}
@@ -51,7 +54,15 @@ public:
 	
 	void set_sector(int sector_id) override {
 		m_sectors.push_back(sector_id);
-	}	
+	}
+
+	Vector2f get_hit_normal() const override{
+		return m_hit_normal;
+	}
+
+	const std::weak_ptr<IGameEntity>& get_owner() const override {
+		return m_owner;
+	}
 
 protected:
 	std::weak_ptr<PhysicsScene> m_scene;
@@ -60,5 +71,6 @@ protected:
 	shape_type m_shape_type;
 	Vector2f m_position;	
 	std::vector<int> m_sectors;
+	Vector2f m_hit_normal;
 };
 

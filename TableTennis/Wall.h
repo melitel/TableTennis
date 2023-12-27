@@ -6,16 +6,21 @@ class Wall :
 {
 	// GameEntity implementation
 public:
+	enum type {
+		top,
+		bottom
+	};
 
-	Wall(Vector2f pos, uint32_t entity_id) : StaticEntity(pos, entity_id) { }
+	Wall(Vector2f pos, uint32_t entity_id, type wall_type) : StaticEntity(pos, entity_id), m_wall_type(wall_type) { }
 
 	void initialize() override;
 	void draw(std::unique_ptr<sf::RenderWindow>& window) override;
 
 private:
-
+	type m_wall_type;
 	sf::RectangleShape m_wall_shape;
 	const float m_wall_width = 700.f;
 	const float m_wall_height = 2.f;
+	Vector2f get_hit_normal();
 };
 

@@ -3,12 +3,13 @@
 
 void DynamicActor::initialize(
 	Vector2f pos, Vector2f vel, bool isPureDynamic, shape_type shape,
-	const std::variant<Vector2f, float>& size)
+	const std::variant<Vector2f, float>& size, const Vector2f& hit_normal)
 {
 	m_position = pos;
 	m_velocity = vel;
 	m_PureDynamic = isPureDynamic;
 	m_shape_type = shape;
+	m_hit_normal = hit_normal;
 
 	if (m_shape_type == rectangle) {
 		Vector2f rectangle_size = std::get<Vector2f>(size);
@@ -22,3 +23,4 @@ void DynamicActor::initialize(
 		assert(false);
 	}
 }
+

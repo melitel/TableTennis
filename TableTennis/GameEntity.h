@@ -10,6 +10,8 @@ public:
 
 	void initialize() override;
 	void draw(std::unique_ptr<sf::RenderWindow>& window) override;
+	void onHit(const Vector2f& normal) override {}
+	void reset(const Vector2f& vel) override {};
 
 protected:
 	std::shared_ptr<IPhysicActor> m_physicActor;

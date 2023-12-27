@@ -11,14 +11,14 @@ extern Game* g_Game;
 
 void Ball::initialize()
 {
-	m_velocity = reset_ball({ -1.f, 0.f });
+	m_velocity = Vector2f(-1.f, 0.f);
 	m_speed = 0.f;
 	m_ball_shape.setFillColor(m_sprite_color);
 	m_ball_shape.setRadius(m_ball_radius);
 	m_ball_shape.setPosition(vec2sfml(m_position));
 	m_physicActor = g_Game->create_dynamic_actor(m_entity_id);
 	DynamicActor* dynactor = (DynamicActor*)m_physicActor.get();
-	dynactor->initialize(m_position, m_velocity, true, PhysicActor::shape_type::circle, m_ball_radius);
+	dynactor->initialize(m_position, m_velocity, true, PhysicActor::shape_type::circle, m_ball_radius, Vector2f(0.f, 0.f));
 }
 
 void Ball::draw(std::unique_ptr<sf::RenderWindow>& window)
@@ -30,7 +30,6 @@ void Ball::draw(std::unique_ptr<sf::RenderWindow>& window)
 
 void Ball::update(float delta, float round_time)
 {
-	//ball_collision_processing(delta);
 	move(delta, round_time);
 }
 
@@ -43,38 +42,50 @@ void Ball::move(float delta, float round_time)
 	dynactor->set_velocity(vel);
 }
 
-Vector2f Ball::reflect_ball(Vector2f collision_type) const {
-
-	Vector2f normal = collision_type;
+void Ball::onHit(const Vector2f& normal)
+{	
+	DynamicActor* dynactor = (DynamicActor*)m_physicActor.get();
 	Vector2f reversed_move = -m_velocity;
-	Vector2f reflected = reflect(reversed_move, normal);
-	reflected = reflected.normalized();
-
-	return reflected;
+	Vector2f reflected = reversed_move.reflect(normal);
+	reflected = modify_vector(reflected).normalized();
+	dynactor->set_velocity(reflected);
 }
 
-Vector2f Ball::reset_ball(Vector2f velocity) {
-		
+void Ball::reset(const Vector2f& vel) {
+	DynamicActor* dynactor = (DynamicActor*)m_physicActor.get();
+	m_velocity = vel;
+	m_ball_shape.setPosition(vec2sfml(m_position));
 	int random = distr(gen);
 	float angle = ((m_ball_vel_sign ? -1 : 1) * 45.f) + random;
 	float radians = angle * static_cast<float>(M_PI) / 180.0f;
 	m_ball_vel_sign = !m_ball_vel_sign;
 
 	// Rotate the vector manually
-	float x = velocity.x * std::cos(radians) - velocity.y * std::sin(radians);
-	float y = velocity.x * std::sin(radians) + velocity.y * std::cos(radians);
+	float x = m_velocity.x * std::cos(radians) - m_velocity.y * std::sin(radians);
+	float y = m_velocity.x * std::sin(radians) + m_velocity.y * std::cos(radians);
 
 	// Update the velocity vector
-	velocity.x = x;
-	velocity.y = y;
+	m_velocity.x = x;
+	m_velocity.y = y;
 
-	return velocity;
+	dynactor->set_velocity(m_velocity);
 }
 
-float Ball::dot(const Vector2f& v1, const Vector2f& v2) const {
-	return v1.x * v2.x + v1.y * v2.y;
+Vector2f Ball::modify_vector(Vector2f& vel)
+{
+	// get a random angle in degrees
+	float angle = static_cast<float>(distr(gen));
+
+	// convert degrees to radians
+	float radians = angle * static_cast<float>(M_PI) / 180.0f;
+	// rotate the vector manually
+	float new_x = vel.x * std::cos(radians) - vel.y * std::sin(radians);
+	float new_y = vel.x * std::sin(radians) + vel.y * std::cos(radians);
+
+	vel.x = new_x;
+	vel.y = new_y;
+
+	return vel;
 }
 
-Vector2f Ball::reflect(const Vector2f& vector, const Vector2f& normal) const {
-	return 2.f * dot(normal, vector) * normal - vector;
-}
+

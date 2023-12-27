@@ -8,11 +8,7 @@ extern Game* g_Game;
 
 void PhysicsScene::initialize(int width, int height)
 {
-	m_collision_normals[ct_left] = Vector2f(1.f, 0.f);
-	m_collision_normals[ct_right] = Vector2f(-1.f, 0.f);
-	m_collision_normals[ct_top] = Vector2f(0.f, 1.f);
-	m_collision_normals[ct_bottom] = Vector2f(0.f, -1.f);
-
+	m_scene_width = width;
 	m_sectors.emplace_back(Vector2f(0, 0), Vector2f(width * 0.2, height), 0, std::vector<int>{1});
 	m_sectors.emplace_back(Vector2f(width * 0.2, 0), Vector2f((width - width * 0.2), height), 1, std::vector<int>{0, 2});
 	m_sectors.emplace_back(Vector2f((width - width * 0.2), 0), Vector2f(width, height), 2, std::vector<int>{1});
@@ -45,12 +41,8 @@ void PhysicsScene::simulate(float delta, float round_time)
 
 		DynamicActor* dynactor = (DynamicActor*) actor.get();
 		
-		if (dynactor->isPureDynamic()) {
-			Vector2f p0 = dynactor->get_position();
-			Vector2f vel = dynactor->get_velocity();
-			Vector2f p1 = p0 + delta * vel;
-			//collision_processing(actor);
-			actor->set_position(p1);		
+		if (dynactor->isPureDynamic()) {			
+			collision_processing(actor, delta);		
 		}
 	}
 }
@@ -67,19 +59,45 @@ const std::shared_ptr<IPhysicActor>& PhysicsScene::create_static_actor(const std
 	return m_static_actors.back();
 }
 
-void PhysicsScene::collision_processing(const std::shared_ptr<IPhysicActor>& actor) {
-	
+void PhysicsScene::collision_processing(const std::shared_ptr<IPhysicActor>& actor, float delta) {
 
+	DynamicActor* dynactor = (DynamicActor*)actor.get();
+	Vector2f p0 = dynactor->get_position();
+	Vector2f vel = dynactor->get_velocity();
+	Vector2f distance = delta * vel;
+	float dist_length = distance.length();
+	float step = dynactor->get_radius() * 2;
+	Vector2f p1 = p0 + distance;
+	std::vector<std::shared_ptr<IPhysicActor>> actors_hit;
+	
+	if (dist_length < step) {
+		if (!g_Game->overlap(dynactor->get_bounds(p1), actor, true, true, actors_hit)) {
+			dynactor->set_position(p1);
+		}
+		else {
+			for (int i = 0; i < actors_hit.size(); i++) {
+				m_onHit.actor = actor;
+				m_onHit.normal = actors_hit[i]->get_hit_normal();
+				m_hitInfo.push_back(m_onHit);			
+			}
+		}
+	}
+	else {
+
+	}
 }
 
-bool PhysicsScene::overlap(const BoundingBox& bb, const std::shared_ptr<IPhysicActor>& ignore_actor, bool dynamic, bool stat)
+bool PhysicsScene::overlap(const BoundingBox& bb, 
+	const std::shared_ptr<IPhysicActor>& ignore_actor, 
+	bool dynamic, bool stat,
+	std::vector<std::shared_ptr<IPhysicActor>>& actors_hit)
 {	
 	std::vector<int> sectors_id = get_sector_from_bb(bb);
 	bool isOverlap = false;	
 
 	for (int i = 0; i < sectors_id.size(); i++) {
-		isOverlap = m_sectors[sectors_id[i]].overlap(bb, ignore_actor, dynamic, stat);
-		if (isOverlap) {
+		isOverlap = m_sectors[sectors_id[i]].overlap(bb, ignore_actor, dynamic, stat, actors_hit);
+		if (isOverlap) {			
 			break;
 		}		
 	}

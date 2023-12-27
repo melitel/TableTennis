@@ -15,7 +15,9 @@ void Player::initialize()
 	dynactor->initialize(
 		m_position, m_velocity, false,
 		PhysicActor::shape_type::rectangle, 
-		Vector2f(m_player_width, m_player_height));
+		Vector2f(m_player_width, m_player_height), Vector2f(1, 0));
+
+
 }
 
 void Player::draw(std::unique_ptr<sf::RenderWindow>& window)
@@ -34,9 +36,8 @@ void Player::move(float delta, float round_time)
 	Vector2f p0 = sfml2svec(m_player_shape.getPosition());
 	Vector2f vel = m_velocity * m_speed;
 	Vector2f p1 = p0 + delta * vel;
-	//check new position with physicScene
-	// raycast
-	if (vel.length() > 0.001f && !g_Game->overlap(m_physicActor->get_bounds(p1), m_physicActor, false, true)) {
+	std::vector<std::shared_ptr<IPhysicActor>> actorsHit;
+	if (vel.length() > 0.001f && !g_Game->overlap(m_physicActor->get_bounds(p1), m_physicActor, false, true, actorsHit)) {
 		m_physicActor->set_position(p1);
 		m_player_shape.setPosition(vec2sfml(p1));
 	}

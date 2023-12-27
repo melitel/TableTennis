@@ -13,7 +13,8 @@ public:
 		Vector2f vel,
 		bool isPureDynamic,
 		shape_type shape,
-		const std::variant<Vector2f, float>& size
+		const std::variant<Vector2f, float>& size,
+		const Vector2f& hit_normal
 	);
 
 	const Vector2f& get_velocity_dir() const {
@@ -30,6 +31,11 @@ public:
 
 	bool isPureDynamic() {
 		return m_PureDynamic;
+	}
+
+	float get_radius() const {
+		Circle circle = std::get<Circle>(m_shapeVariant);
+		return circle.get_radius();
 	}
 
 private:

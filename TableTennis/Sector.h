@@ -32,7 +32,10 @@ public:
 		m_static_actors.push_back(actor);
 	}
 
-	bool overlap(const BoundingBox& bb, const std::shared_ptr<IPhysicActor>& actor, bool dynamic, bool stat);
+	bool overlap(const BoundingBox& bb, 
+		const std::shared_ptr<IPhysicActor>& actor, 
+		bool dynamic, bool stat,
+		std::vector<std::shared_ptr<IPhysicActor>>& actors_hit);
 
 private:
 	BoundingBox m_bbox;
