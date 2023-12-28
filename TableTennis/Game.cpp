@@ -54,6 +54,7 @@ void Game::initialize()
 		m_entities.size(), GameEntity::entity_type::player, Player::player_type::right));
 	m_entities.emplace_back(std::make_shared<Ball>(Vector2f(350.f, 400.f), m_entities.size(),
 		GameEntity::entity_type::ball));
+	m_entities.back()->addObserver(&observer);
 	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 100.f), 
 		m_entities.size(), GameEntity::entity_type::wall, Wall::type::top));
 	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 698.f), 
@@ -119,8 +120,7 @@ void Game::update()
 		m_physics_scene->get_hit_info(hitInfos);		
 		for (int i = 0; i < hitInfos.size(); i++) {
 			std::shared_ptr<IGameEntity> owner_entity =	hitInfos[i].actor->get_owner().lock();
-			std::shared_ptr<IGameEntity> entity_hit = hitInfos[i].actor_hit->get_owner().lock();
-			
+			std::shared_ptr<IGameEntity> entity_hit = hitInfos[i].actor_hit->get_owner().lock();			
 
 			if (owner_entity) {
 				owner_entity->onHit(hitInfos[i].normal, entity_hit);
@@ -158,10 +158,8 @@ bool Game::overlap(const BoundingBox& bb,
 	return m_physics_scene->overlap(bb, ignore_actor, dynamic, stat, actors_hit);
 }
 
-void Game::reset_match(const std::shared_ptr<IPhysicActor>& actor, const Vector2f& vel, Game::player player_score)
-{
-	std::shared_ptr<IGameEntity> owner_entity = actor->get_owner().lock();
-	owner_entity->reset(vel);
+void Game::add_score(Game::player player_score)
+{	
 	m_player_score[player_score]++;
 }
 

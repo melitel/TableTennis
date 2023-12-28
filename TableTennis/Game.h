@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Ball.h"
 #include "Wall.h"
+#include "Observer.h"
 
 class Game
 {
@@ -32,10 +33,11 @@ public:
 
 	enum player { p_left, p_right, p_count };
 
-	void reset_match(const std::shared_ptr<IPhysicActor>& actor, const Vector2f& vel, player player_score);
+	void add_score(player player_score);
 
 private:	
 
+	Observer observer;
 	std::shared_ptr<PhysicsScene> m_physics_scene;
 
 	enum input { key_W, key_S, key_Up, key_Down, key_Pause, key_count };

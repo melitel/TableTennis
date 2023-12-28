@@ -52,11 +52,20 @@ void Ball::onHit(const Vector2f& normal, const std::shared_ptr<IGameEntity> &ent
 
 		if (normal.dot(left_wall_normal) > (1.f - EPS_3)) {
 			// send event to game
-			//g_Game->
+			int random = leftHit(rd);
+			Vector2f mod_start_vec = modify_vector(m_ball_starting_dir[random]).normalized();
+			for (Observer* observer : observers) {
+				observer->ballOut(this, mod_start_vec, Game::player::p_right);
+			}
 			return;
 		}
 		else if (normal.dot(right_wall_normal) > (1.f - EPS_3)) {
 			// send event to game
+			int random = rightHit(rd);
+			Vector2f mod_start_vec = modify_vector(m_ball_starting_dir[random]).normalized();
+			for (Observer* observer : observers) {
+				observer->ballOut(this, mod_start_vec, Game::player::p_left);
+			}
 			return;
 		}
 	}
@@ -68,11 +77,21 @@ void Ball::onHit(const Vector2f& normal, const std::shared_ptr<IGameEntity> &ent
 	dynactor->set_velocity(reflected);
 }
 
+void Ball::addObserver(Observer* observer)
+{
+	observers.push_back(observer);
+}
+
+void Ball::removeObserver(Observer* observer)
+{
+	observers.pop_back();
+}
+
 void Ball::reset(const Vector2f& vel_dir) {
 
 	DynamicActor* dynactor = (DynamicActor*)m_physicActor.get();
 	Vector2f velocity = m_ball_starting_speed * vel_dir;
-	m_ball_shape.setPosition(vec2sfml(m_starting_position));
+	dynactor->set_position(m_starting_position);
 	int random = distr(gen);
 	float angle = ((m_ball_vel_sign ? -1 : 1) * 45.f) + random;
 	float radians = angle * static_cast<float>(M_PI) / 180.0f;

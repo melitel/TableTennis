@@ -77,7 +77,7 @@ void PhysicsScene::collision_processing(const std::shared_ptr<IPhysicActor>& act
 			for (int i = 0; i < actors_hit.size(); i++) {
 				hit_info infoHit;
 				infoHit.actor = actor;
-				infoHit.actor = actors_hit[i];
+				infoHit.actor_hit = actors_hit[i];
 				infoHit.normal = actors_hit[i]->get_hit_normal();
 				m_hitInfo.push_back(infoHit);
 			}

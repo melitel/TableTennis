@@ -13,6 +13,8 @@ public:
 	void draw(std::unique_ptr<sf::RenderWindow>& window) override;
 	void onHit(const Vector2f& normal, const std::shared_ptr<IGameEntity>& entity_hit) override {}
 	void reset(const Vector2f& vel) override {}
+	void addObserver(Observer* observer) override {};
+	void removeObserver(Observer* observer) override {};
 	entity_type get_entity_type() override {
 		return m_entity_type;
 	}
