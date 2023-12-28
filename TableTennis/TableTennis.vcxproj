@@ -91,8 +91,10 @@
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="DynamicActor.cpp" />
     <ClCompile Include="GameEntity.cpp" />
+    <ClCompile Include="IObserver.cpp" />
     <ClCompile Include="IPhysicActor.cpp" />
     <ClCompile Include="MovableEntity.cpp" />
+    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="Sector.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="IGameEntity.cpp" />
@@ -108,8 +110,10 @@
     <ClInclude Include="Ball.h" />
     <ClInclude Include="DynamicActor.h" />
     <ClInclude Include="GameEntity.h" />
+    <ClInclude Include="IObserver.h" />
     <ClInclude Include="IPhysicActor.h" />
     <ClInclude Include="MovableEntity.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="Sector.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="IGameEntity.h" />

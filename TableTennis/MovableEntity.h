@@ -7,7 +7,7 @@ class MovableEntity :
 {
 public:
 
-    MovableEntity(Vector2f pos, uint32_t entity_id) : GameEntity(pos, entity_id) {}
+    MovableEntity(Vector2f pos, uint32_t entity_id, entity_type entType) : GameEntity(pos, entity_id, entType) {}
 
     virtual void update(float delta, float round_time);
     virtual void move(float delta, float round_time);

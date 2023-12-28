@@ -48,10 +48,20 @@ void Game::initialize()
 	m_window->clear(sf::Color::Black);
 	m_game_status = game_status::pause;
 
-	m_entities.emplace_back(std::make_shared<Player>(Vector2f(100.f, 340.f), m_entities.size()));
-	m_entities.emplace_back(std::make_shared<Ball>(Vector2f(350.f, 400.f), m_entities.size()));
-	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 100.f), m_entities.size(), Wall::type::top));
-	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 698.f), m_entities.size(), Wall::type::bottom));
+	m_entities.emplace_back(std::make_shared<Player>(Vector2f(100.f, 340.f), 
+		m_entities.size(), GameEntity::entity_type::player, Player::player_type::left));
+	m_entities.emplace_back(std::make_shared<Player>(Vector2f(600.f, 340.f), 
+		m_entities.size(), GameEntity::entity_type::player, Player::player_type::right));
+	m_entities.emplace_back(std::make_shared<Ball>(Vector2f(350.f, 400.f), m_entities.size(),
+		GameEntity::entity_type::ball));
+	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 100.f), 
+		m_entities.size(), GameEntity::entity_type::wall, Wall::type::top));
+	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 698.f), 
+		m_entities.size(), GameEntity::entity_type::wall, Wall::type::bottom));
+	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 100.f),
+		m_entities.size(), GameEntity::entity_type::wall, Wall::type::left));
+	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(698.f, 100.f), 
+		m_entities.size(), GameEntity::entity_type::wall, Wall::type::right));
 	
 	for (auto& entity : m_entities) {
 		entity->initialize();
@@ -106,12 +116,14 @@ void Game::update()
 	{
 		// handle hits
 		std::vector<PhysicsScene::hit_info> hitInfos;
-		m_physics_scene->get_hit_info(hitInfos);
-		m_physics_scene->update(delta, m_round_time.count());
+		m_physics_scene->get_hit_info(hitInfos);		
 		for (int i = 0; i < hitInfos.size(); i++) {
 			std::shared_ptr<IGameEntity> owner_entity =	hitInfos[i].actor->get_owner().lock();
+			std::shared_ptr<IGameEntity> entity_hit = hitInfos[i].actor_hit->get_owner().lock();
+			
+
 			if (owner_entity) {
-				owner_entity->onHit(hitInfos[i].normal);
+				owner_entity->onHit(hitInfos[i].normal, entity_hit);
 			}
 		}
 
@@ -122,7 +134,9 @@ void Game::update()
 			if (MovableEntity* mov_ent = entity->asMovableEntity()) {
 				mov_ent->update(delta, m_round_time.count());
 			}			
-		}		
+		}	
+
+		m_physics_scene->update(delta, m_round_time.count());
 	}
 }
 
@@ -186,14 +200,14 @@ void Game::process_inputs(const input_array& my_input_array) {
 	{
 		if (!m_input_state[key_W] && my_input_array[key_W])
 		{
-			m_player_velocity_change = velocity_up;
+			m_playerL_velocity_change = velocity_up;
 		}
 		else if (!my_input_array[key_S]) {
-			m_player_velocity_change = velocity_stop;
+			m_playerL_velocity_change = velocity_stop;
 		}
 		else if (my_input_array[key_S])
 		{
-			m_player_velocity_change = velocity_down;
+			m_playerL_velocity_change = velocity_down;
 		}
 	}
 
@@ -201,50 +215,48 @@ void Game::process_inputs(const input_array& my_input_array) {
 	{
 		if (!m_input_state[key_S] && my_input_array[key_S])
 		{
-			m_player_velocity_change = velocity_down;
+			m_playerL_velocity_change = velocity_down;
 		}
 		else if (!my_input_array[key_W]) {
-			m_player_velocity_change = velocity_stop;
+			m_playerL_velocity_change = velocity_stop;
 		}
 		else if (my_input_array[key_W])
 		{
-			m_player_velocity_change = velocity_up;
+			m_playerL_velocity_change = velocity_up;
 		}
 	}
 
-	//process input for second player or Ai
+	if (my_input_array[key_Up] != m_input_state[key_Up])
+	{
+		if (!m_input_state[key_Up] && my_input_array[key_Up])
+		{
+			m_playerR_velocity_change = velocity_up;
+		}
+		else if (!my_input_array[key_Down]) {
 
-	//if (my_input_array[key_Left] != m_input_state[key_Left])
-	//{
-	//	if (!m_input_state[key_Left] && my_input_array[key_Left])
-	//	{
-	//		m_player2_velocity.y = -1.f;
-	//	}
-	//	else if (!my_input_array[key_Right]) {
+			m_playerR_velocity_change = velocity_stop;
+		}
+		else if (my_input_array[key_Down])
+		{
+			m_playerR_velocity_change = velocity_down;
+		}
+	}
 
-	//		m_player2_velocity.y = 0.f;
-	//	}
-	//	else if (my_input_array[key_Right])
-	//	{
-	//		m_player2_velocity.y = 1.f;
-	//	}
-	//}
+	if (my_input_array[key_Down] != m_input_state[key_Down])
+	{
+		if (!m_input_state[key_Down] && my_input_array[key_Down])
+		{
+			m_playerR_velocity_change = velocity_down;
+		}
+		else if (!my_input_array[key_Up]) {
 
-	//if (my_input_array[key_Right] != m_input_state[key_Right])
-	//{
-	//	if (!m_input_state[key_Right] && my_input_array[key_Right])
-	//	{
-	//		m_player2_velocity.y = 1.f;
-	//	}
-	//	else if (!my_input_array[key_Left]) {
-
-	//		m_player2_velocity.y = 0.f;
-	//	}
-	//	else if (my_input_array[key_Left])
-	//	{
-	//		m_player2_velocity.y = -1.f;
-	//	}
-	//}
+			m_playerR_velocity_change = velocity_stop;
+		}
+		else if (my_input_array[key_Up])
+		{
+			m_playerR_velocity_change = velocity_up;
+		}
+	}
 }
 
 

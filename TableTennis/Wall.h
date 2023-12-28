@@ -8,10 +8,13 @@ class Wall :
 public:
 	enum type {
 		top,
-		bottom
+		bottom,
+		left,
+		right
 	};
 
-	Wall(Vector2f pos, uint32_t entity_id, type wall_type) : StaticEntity(pos, entity_id), m_wall_type(wall_type) { }
+	Wall(Vector2f pos, uint32_t entity_id, entity_type entType, type wall_type) : 
+		StaticEntity(pos, entity_id, entType), m_wall_type(wall_type) { }
 
 	void initialize() override;
 	void draw(std::unique_ptr<sf::RenderWindow>& window) override;

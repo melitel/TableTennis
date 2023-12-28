@@ -11,13 +11,22 @@ void Player::initialize()
 	m_player_shape.setFillColor(m_sprite_color);
 	m_player_shape.setPosition(vec2sfml(m_position));
 	m_physicActor = g_Game->create_dynamic_actor(m_entity_id);
-	DynamicActor* dynactor = (DynamicActor*)m_physicActor.get();
-	dynactor->initialize(
-		m_position, m_velocity, false,
-		PhysicActor::shape_type::rectangle, 
-		Vector2f(m_player_width, m_player_height), Vector2f(1, 0));
-
-
+	DynamicActor* dynactor = (DynamicActor*)m_physicActor.get();	
+	if (m_player_type == left) {
+		dynactor->initialize(
+			m_position, m_velocity, false,
+			PhysicActor::shape_type::rectangle,
+			Vector2f(m_player_width, m_player_height), Vector2f(1, 0));
+	}
+	else if (m_player_type == right) {
+		dynactor->initialize(
+			m_position, m_velocity, false,
+			PhysicActor::shape_type::rectangle,
+			Vector2f(m_player_width, m_player_height), Vector2f(-1, 0));
+	}
+	else {
+		assert(false);
+	}	
 }
 
 void Player::draw(std::unique_ptr<sf::RenderWindow>& window)
@@ -27,7 +36,15 @@ void Player::draw(std::unique_ptr<sf::RenderWindow>& window)
 
 void Player::update(float delta, float round_time)
 {
-	change_velocity(g_Game->get_velocity_requested());
+	if (m_player_type == left) {
+		change_velocity(g_Game->get_playerL_velocity_requested());
+	}
+	else if (m_player_type == right) {
+		change_velocity(g_Game->get_playerR_velocity_requested());
+	}
+	else {
+		assert(false);
+	}	
 	move(delta, round_time);
 }
 

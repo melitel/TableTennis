@@ -5,8 +5,12 @@ class Player : public MovableEntity
 {
 public:
 
-	Player(Vector2f pos, uint32_t entity_id) : MovableEntity(pos, entity_id) {	}
-
+	enum player_type {
+		left,
+		right
+	};
+	Player(Vector2f pos, uint32_t entity_id, entity_type entType, player_type pType) : 
+		MovableEntity(pos, entity_id, entType), m_player_type(pType) {	}
 	void initialize() override;
 	void draw(std::unique_ptr<sf::RenderWindow>& window) override;
 	void update(float delta, float round_time) override;
@@ -19,6 +23,7 @@ public:
 
 private:	
 	sf::RectangleShape m_player_shape;
+	player_type m_player_type;
 	const float m_player_width = 15.f;	
 	const float m_player_height = 120.f;
 };

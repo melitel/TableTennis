@@ -17,8 +17,13 @@ public:
 		const std::shared_ptr<IPhysicActor>& ignore_actor, 
 		bool dynamic, bool stat, 
 		std::vector<std::shared_ptr<IPhysicActor>>& actors_hit);
-	float get_velocity_requested() const {
-		return m_player_velocity_change;
+
+	float get_playerL_velocity_requested() const {
+		return m_playerL_velocity_change;
+	}
+
+	float get_playerR_velocity_requested() const {
+		return m_playerR_velocity_change;
 	}
 
 	const std::shared_ptr<PhysicsScene>& physic_scene() const {
@@ -52,7 +57,8 @@ private:
 	float velocity_up = -1.f;
 	float velocity_down = 1.f;
 	float velocity_stop = 0.f;
-	float m_player_velocity_change = 0.f;
+	float m_playerL_velocity_change = 0.f;
+	float m_playerR_velocity_change = 0.f;
 
 	const sf::Color m_sprite_color{ 255, 255, 255 };	
 

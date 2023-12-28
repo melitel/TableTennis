@@ -35,8 +35,7 @@ void PhysicsScene::update(float delta, float round_time)
 }
 
 void PhysicsScene::simulate(float delta, float round_time)
-{
-	//for m_actors
+{	
 	for (auto& actor : m_dynamic_actors) {
 
 		DynamicActor* dynactor = (DynamicActor*) actor.get();
@@ -76,9 +75,11 @@ void PhysicsScene::collision_processing(const std::shared_ptr<IPhysicActor>& act
 		}
 		else {
 			for (int i = 0; i < actors_hit.size(); i++) {
-				m_onHit.actor = actor;
-				m_onHit.normal = actors_hit[i]->get_hit_normal();
-				m_hitInfo.push_back(m_onHit);			
+				hit_info infoHit;
+				infoHit.actor = actor;
+				infoHit.actor = actors_hit[i];
+				infoHit.normal = actors_hit[i]->get_hit_normal();
+				m_hitInfo.push_back(infoHit);
 			}
 		}
 	}

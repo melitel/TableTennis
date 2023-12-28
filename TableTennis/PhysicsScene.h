@@ -14,6 +14,7 @@ public:
 	struct hit_info {
 		Vector2f normal;
 		std::shared_ptr<IPhysicActor> actor;
+		std::shared_ptr<IPhysicActor> actor_hit;
 	};
 	void initialize(int width, int height);
 	void update(float delta, float round_time);
@@ -30,8 +31,7 @@ public:
 	}
 
 private:
-
-	hit_info m_onHit;
+		
 	std::vector<int> get_sector_from_bb(const BoundingBox& bb);
 	std::vector<Sector> m_sectors;
 	std::vector<std::shared_ptr<IPhysicActor>> m_dynamic_actors;

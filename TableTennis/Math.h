@@ -2,6 +2,10 @@
 #include <SFML/System/Vector2.hpp>
 #include <cmath>
 
+// defines
+#define EPS_1 0.1f
+#define EPS_3 0.001f
+#define EPS_6 0.000001f
 
 struct Vector2f {
 
@@ -63,7 +67,6 @@ struct Vector2f {
 
 	Vector2f reflect(const Vector2f& normal) const {
 		float dotp = dot(normal) * 2.f;
-
 		return normal * dotp - *this;
 	}
 };
