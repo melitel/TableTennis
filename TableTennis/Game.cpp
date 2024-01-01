@@ -13,26 +13,8 @@ void Game::run()
 
 	while (m_window->isOpen()) {	
 
-		// check all the window's events that were triggered since the last iteration of the loop
-		sf::Event event;
-		input_array my_input_array{ m_input_state };
-		
-
-		while (m_window->pollEvent(event))
-		{
-			switch (event.type)
-			{
-			case sf::Event::KeyPressed: handlePlayerInput(event.key.code, true, my_input_array); break;
-			case sf::Event::KeyReleased: handlePlayerInput(event.key.code, false, my_input_array); break;
-			}
-			// "close requested" event: we close the window
-			if (event.type == sf::Event::Closed)
-			m_window->close();
-		}
-
-		// process events
-		process_inputs(my_input_array);
-		my_input_array.swap(m_input_state);
+		inputManager.gather_input(m_window);
+		process_inputs(inputManager.get_current_input_state());
 		update();
 		draw();
 	}
@@ -163,28 +145,11 @@ void Game::add_score(Game::player player_score)
 	m_player_score[player_score]++;
 }
 
-void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed, input_array& my_input_array)
+void Game::process_inputs(const InputManager::input_array& my_input_array)
 {
-	if (key == sf::Keyboard::W) {
-		my_input_array[key_W] = isPressed;
-	}
-	else if (key == sf::Keyboard::S) {
-		my_input_array[key_S] = isPressed;
-	}
-	else if (key == sf::Keyboard::Up) {
-		my_input_array[key_Up] = isPressed;
-	}
-	else if (key == sf::Keyboard::Down) {
-		my_input_array[key_Down] = isPressed;
-	}
-	else if (key == sf::Keyboard::Space) {
-		my_input_array[key_Pause] = isPressed;		
-	}	
-}
+	InputManager::input_array input_state = inputManager.get_previous_input_state();
 
-void Game::process_inputs(const input_array& my_input_array) {
-
-	if (my_input_array[key_Pause] && !m_input_state[key_Pause])
+	if (my_input_array[InputManager::input::key_Pause] && !input_state[InputManager::input::key_Pause])
 	{
 		if (m_game_status == game_status::ingame) {
 			m_game_status = game_status::pause;
@@ -194,63 +159,63 @@ void Game::process_inputs(const input_array& my_input_array) {
 		}
 	}
 
-	if (my_input_array[key_W] != m_input_state[key_W])
+	if (my_input_array[InputManager::input::key_W] != input_state[InputManager::input::key_W])
 	{
-		if (!m_input_state[key_W] && my_input_array[key_W])
+		if (!input_state[InputManager::input::key_W] && my_input_array[InputManager::input::key_W])
 		{
 			m_playerL_velocity_change = velocity_up;
 		}
-		else if (!my_input_array[key_S]) {
+		else if (!my_input_array[InputManager::input::key_S]) {
 			m_playerL_velocity_change = velocity_stop;
 		}
-		else if (my_input_array[key_S])
+		else if (my_input_array[InputManager::input::key_S])
 		{
 			m_playerL_velocity_change = velocity_down;
 		}
 	}
 
-	if (my_input_array[key_S] != m_input_state[key_S])
+	if (my_input_array[InputManager::input::key_S] != input_state[InputManager::input::key_S])
 	{
-		if (!m_input_state[key_S] && my_input_array[key_S])
+		if (!input_state[InputManager::input::key_S] && my_input_array[InputManager::input::key_S])
 		{
 			m_playerL_velocity_change = velocity_down;
 		}
-		else if (!my_input_array[key_W]) {
+		else if (!my_input_array[InputManager::input::key_W]) {
 			m_playerL_velocity_change = velocity_stop;
 		}
-		else if (my_input_array[key_W])
+		else if (my_input_array[InputManager::input::key_W])
 		{
 			m_playerL_velocity_change = velocity_up;
 		}
 	}
 
-	if (my_input_array[key_Up] != m_input_state[key_Up])
+	if (my_input_array[InputManager::input::key_Up] != input_state[InputManager::input::key_Up])
 	{
-		if (!m_input_state[key_Up] && my_input_array[key_Up])
+		if (!input_state[InputManager::input::key_Up] && my_input_array[InputManager::input::key_Up])
 		{
 			m_playerR_velocity_change = velocity_up;
 		}
-		else if (!my_input_array[key_Down]) {
+		else if (!my_input_array[InputManager::input::key_Down]) {
 
 			m_playerR_velocity_change = velocity_stop;
 		}
-		else if (my_input_array[key_Down])
+		else if (my_input_array[InputManager::input::key_Down])
 		{
 			m_playerR_velocity_change = velocity_down;
 		}
 	}
 
-	if (my_input_array[key_Down] != m_input_state[key_Down])
+	if (my_input_array[InputManager::input::key_Down] != input_state[InputManager::input::key_Down])
 	{
-		if (!m_input_state[key_Down] && my_input_array[key_Down])
+		if (!input_state[InputManager::input::key_Down] && my_input_array[InputManager::input::key_Down])
 		{
 			m_playerR_velocity_change = velocity_down;
 		}
-		else if (!my_input_array[key_Up]) {
+		else if (!my_input_array[InputManager::input::key_Up]) {
 
 			m_playerR_velocity_change = velocity_stop;
 		}
-		else if (my_input_array[key_Up])
+		else if (my_input_array[InputManager::input::key_Up])
 		{
 			m_playerR_velocity_change = velocity_up;
 		}

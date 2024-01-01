@@ -7,6 +7,7 @@
 #include "Ball.h"
 #include "Wall.h"
 #include "Observer.h"
+#include "InputManager.h"
 
 class Game
 {
@@ -18,6 +19,7 @@ public:
 		const std::shared_ptr<IPhysicActor>& ignore_actor, 
 		bool dynamic, bool stat, 
 		std::vector<std::shared_ptr<IPhysicActor>>& actors_hit);
+	void process_inputs(const InputManager::input_array& my_input_array);
 
 	float get_playerL_velocity_requested() const {
 		return m_playerL_velocity_change;
@@ -38,20 +40,14 @@ public:
 private:	
 
 	Observer observer;
+	InputManager inputManager;
 	std::shared_ptr<PhysicsScene> m_physics_scene;
-
-	enum input { key_W, key_S, key_Up, key_Down, key_Pause, key_count };
-	using input_array = std::array<bool, key_count>;
 
 	void initialize();
 	void draw();
-	void update();
-	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed, input_array& my_input_array);
-	void process_inputs(const input_array& my_input_array);		
+	void update();	
 	
-	enum class game_status {ingame, pause};
-	
-	input_array m_input_state{ false }; 
+	enum class game_status {ingame, pause};	
 	
 	uint32_t m_window_width = 700;
 	uint32_t m_window_height = 700;
