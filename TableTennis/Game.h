@@ -8,6 +8,7 @@
 #include "Wall.h"
 #include "Observer.h"
 #include "InputManager.h"
+#include "IEvent.h"
 
 class Game
 {
@@ -15,23 +16,33 @@ public:
 	void run();
 	std::shared_ptr<IPhysicActor> create_dynamic_actor(uint32_t entity_id);
 	std::shared_ptr<IPhysicActor> create_static_actor(uint32_t entity_id);
+	void create_event(std::shared_ptr<IEvent>& event);
 	bool overlap(const BoundingBox& bb, 
 		const std::shared_ptr<IPhysicActor>& ignore_actor, 
 		bool dynamic, bool stat, 
 		std::vector<std::shared_ptr<IPhysicActor>>& actors_hit);
-	void process_inputs(const InputManager::input_array& my_input_array);
 
 	float get_playerL_velocity_requested() const {
 		return m_playerL_velocity_change;
+	}
+
+	void change_playerL_velocity(float vel) {
+		m_playerL_velocity_change = vel;
 	}
 
 	float get_playerR_velocity_requested() const {
 		return m_playerR_velocity_change;
 	}
 
+	void change_playerR_velocity(float vel) {
+		m_playerR_velocity_change = vel;
+	}
+
 	const std::shared_ptr<PhysicsScene>& physic_scene() const {
 		return m_physics_scene;
 	}
+
+	void game_pause();
 
 	enum player { p_left, p_right, p_count };
 
@@ -62,6 +73,8 @@ private:
 
 	static std::unique_ptr<sf::RenderWindow> m_window;
 	std::vector<std::shared_ptr<IGameEntity>> m_entities;
+	std::vector<std::shared_ptr<IEvent>> m_events;
+
 	sf::RectangleShape border;
 	
 	sf::Text m_score_text;

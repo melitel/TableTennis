@@ -90,6 +90,7 @@
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="DynamicActor.cpp" />
+    <ClCompile Include="Events.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="IObserver.cpp" />
@@ -110,7 +111,9 @@
   <ItemGroup>
     <ClInclude Include="Ball.h" />
     <ClInclude Include="DynamicActor.h" />
+    <ClInclude Include="Events.h" />
     <ClInclude Include="GameEntity.h" />
+    <ClInclude Include="IEvent.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="IObserver.h" />
     <ClInclude Include="IPhysicActor.h" />

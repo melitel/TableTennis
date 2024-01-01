@@ -14,7 +14,6 @@ void Game::run()
 	while (m_window->isOpen()) {	
 
 		inputManager.gather_input(m_window);
-		process_inputs(inputManager.get_current_input_state());
 		update();
 		draw();
 	}
@@ -91,13 +90,17 @@ void Game::update()
 
 	m_score_text.setString(std::string("Score ") + std::to_string(m_player_score[p_left]) + " : " + std::to_string(m_player_score[p_right]));
 	
+	for (int e = 0; e < m_events.size(); e++) {
+		m_events[e]->onEvent();
+	}
+
 	if (m_game_status == game_status::pause)
 	{
-		m_score_text.setFillColor(sf::Color::Red);
+		m_score_text.setFillColor(sf::Color::Red);	
 	}
 	else
 	{
-		// handle hits
+		// handle hits			
 		std::vector<PhysicsScene::hit_info> hitInfos;
 		m_physics_scene->get_hit_info(hitInfos);		
 		for (int i = 0; i < hitInfos.size(); i++) {
@@ -120,6 +123,8 @@ void Game::update()
 
 		m_physics_scene->update(delta, m_round_time.count());
 	}
+
+	m_events.clear();
 }
 
 std::shared_ptr<IPhysicActor> Game::create_dynamic_actor(uint32_t entity_id)
@@ -132,6 +137,11 @@ std::shared_ptr<IPhysicActor> Game::create_static_actor(uint32_t entity_id)
 	return m_physics_scene->create_static_actor(m_entities[entity_id]);
 }
 
+void Game::create_event(std::shared_ptr<IEvent>& event)
+{
+	m_events.push_back(event);
+}
+
 bool Game::overlap(const BoundingBox& bb, 
 	const std::shared_ptr<IPhysicActor>& ignore_actor, 
 	bool dynamic, bool stat,
@@ -140,87 +150,21 @@ bool Game::overlap(const BoundingBox& bb,
 	return m_physics_scene->overlap(bb, ignore_actor, dynamic, stat, actors_hit);
 }
 
+void Game::game_pause()
+{
+	if (m_game_status == game_status::pause) {
+		m_game_status = game_status::ingame;
+	}
+	else {
+		m_game_status = game_status::pause;
+	}
+}
+
 void Game::add_score(Game::player player_score)
 {	
 	m_player_score[player_score]++;
 }
 
-void Game::process_inputs(const InputManager::input_array& my_input_array)
-{
-	InputManager::input_array input_state = inputManager.get_previous_input_state();
-
-	if (my_input_array[InputManager::input::key_Pause] && !input_state[InputManager::input::key_Pause])
-	{
-		if (m_game_status == game_status::ingame) {
-			m_game_status = game_status::pause;
-		}
-		else {
-			m_game_status = game_status::ingame;
-		}
-	}
-
-	if (my_input_array[InputManager::input::key_W] != input_state[InputManager::input::key_W])
-	{
-		if (!input_state[InputManager::input::key_W] && my_input_array[InputManager::input::key_W])
-		{
-			m_playerL_velocity_change = velocity_up;
-		}
-		else if (!my_input_array[InputManager::input::key_S]) {
-			m_playerL_velocity_change = velocity_stop;
-		}
-		else if (my_input_array[InputManager::input::key_S])
-		{
-			m_playerL_velocity_change = velocity_down;
-		}
-	}
-
-	if (my_input_array[InputManager::input::key_S] != input_state[InputManager::input::key_S])
-	{
-		if (!input_state[InputManager::input::key_S] && my_input_array[InputManager::input::key_S])
-		{
-			m_playerL_velocity_change = velocity_down;
-		}
-		else if (!my_input_array[InputManager::input::key_W]) {
-			m_playerL_velocity_change = velocity_stop;
-		}
-		else if (my_input_array[InputManager::input::key_W])
-		{
-			m_playerL_velocity_change = velocity_up;
-		}
-	}
-
-	if (my_input_array[InputManager::input::key_Up] != input_state[InputManager::input::key_Up])
-	{
-		if (!input_state[InputManager::input::key_Up] && my_input_array[InputManager::input::key_Up])
-		{
-			m_playerR_velocity_change = velocity_up;
-		}
-		else if (!my_input_array[InputManager::input::key_Down]) {
-
-			m_playerR_velocity_change = velocity_stop;
-		}
-		else if (my_input_array[InputManager::input::key_Down])
-		{
-			m_playerR_velocity_change = velocity_down;
-		}
-	}
-
-	if (my_input_array[InputManager::input::key_Down] != input_state[InputManager::input::key_Down])
-	{
-		if (!input_state[InputManager::input::key_Down] && my_input_array[InputManager::input::key_Down])
-		{
-			m_playerR_velocity_change = velocity_down;
-		}
-		else if (!my_input_array[InputManager::input::key_Up]) {
-
-			m_playerR_velocity_change = velocity_stop;
-		}
-		else if (my_input_array[InputManager::input::key_Up])
-		{
-			m_playerR_velocity_change = velocity_up;
-		}
-	}
-}
 
 
 

@@ -2,6 +2,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <array>
+#include "Events.h"
 
 class InputManager
 {
@@ -17,8 +18,11 @@ public:
 		return m_current_input_state;
 	}
 
+	void check_for_events();
+
 private:
 
+	void createEvent(InputEvent::event_type type);
 	input_array m_current_input_state{ false };
 	input_array m_previous_input_state{ false };
 	void update_input_states(sf::Keyboard::Key key, bool isPressed);	

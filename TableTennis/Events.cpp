@@ -1,0 +1,38 @@
+#include "Events.h"
+#include "Game.h"
+
+extern Game* g_Game;
+
+void InputEvent::onEvent()
+{
+	switch (m_event_type)
+	{
+	case first_player_up:
+		g_Game->change_playerL_velocity(velocity_up);
+		break;
+	case first_player_stop:
+		g_Game->change_playerL_velocity(velocity_stop);
+		break;
+	case first_player_down:
+		g_Game->change_playerL_velocity(velocity_down);
+		break;
+	case second_player_up:
+		g_Game->change_playerR_velocity(velocity_up);
+		break;
+	case second_player_stop:
+		g_Game->change_playerR_velocity(velocity_stop);
+		break;
+	case second_player_down:
+		g_Game->change_playerR_velocity(velocity_down);
+		break;
+	case pause:
+		g_Game->game_pause();
+		break;
+	default:
+		break;
+	}
+}
+
+//void RoundEndEvent::onEvent()
+//{
+//}
