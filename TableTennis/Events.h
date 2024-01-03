@@ -31,10 +31,17 @@ private:
 	float velocity_stop = 0.f;
 };
 
-//class RoundEndEvent :
-//	public IEvent
-//{
-//public:
-//	void onEvent() override;
-//
-//};
+class RoundEndEvent :
+	public IEvent
+{
+public:
+	enum event_type {
+		first_player_point,
+		second_player_point
+	};
+
+	RoundEndEvent(event_type type) : m_event_type(type) { }
+	void onEvent() override;
+private:
+	event_type m_event_type;
+};

@@ -33,6 +33,17 @@ void InputEvent::onEvent()
 	}
 }
 
-//void RoundEndEvent::onEvent()
-//{
-//}
+void RoundEndEvent::onEvent()
+{
+	switch (m_event_type)
+	{
+		case first_player_point:
+			g_Game->add_score(Game::player::p_left);
+			break;
+		case second_player_point:
+			g_Game->add_score(Game::player::p_right);
+			break;
+		default:
+			break;
+	}
+}

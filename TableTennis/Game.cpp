@@ -35,7 +35,7 @@ void Game::initialize()
 		m_entities.size(), GameEntity::entity_type::player, Player::player_type::right));
 	m_entities.emplace_back(std::make_shared<Ball>(Vector2f(350.f, 400.f), m_entities.size(),
 		GameEntity::entity_type::ball));
-	m_entities.back()->addObserver(&observer);
+	//m_entities.back()->addObserver(&observer);
 	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 100.f), 
 		m_entities.size(), GameEntity::entity_type::wall, Wall::type::top));
 	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 698.f), 
@@ -94,6 +94,8 @@ void Game::update()
 		m_events[e]->onEvent();
 	}
 
+	m_events.clear();
+
 	if (m_game_status == game_status::pause)
 	{
 		m_score_text.setFillColor(sf::Color::Red);	
@@ -122,9 +124,7 @@ void Game::update()
 		}	
 
 		m_physics_scene->update(delta, m_round_time.count());
-	}
-
-	m_events.clear();
+	}	
 }
 
 std::shared_ptr<IPhysicActor> Game::create_dynamic_actor(uint32_t entity_id)

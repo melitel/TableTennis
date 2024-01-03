@@ -6,7 +6,7 @@
 #include "Player.h"
 #include "Ball.h"
 #include "Wall.h"
-#include "Observer.h"
+//#include "Observer.h"
 #include "InputManager.h"
 #include "IEvent.h"
 
@@ -50,7 +50,7 @@ public:
 
 private:	
 
-	Observer observer;
+	//Observer observer;
 	InputManager inputManager;
 	std::shared_ptr<PhysicsScene> m_physics_scene;
 

@@ -52,20 +52,22 @@ void Ball::onHit(const Vector2f& normal, const std::shared_ptr<IGameEntity> &ent
 
 		if (normal.dot(left_wall_normal) > (1.f - EPS_3)) {
 			// send event to game
-			int random = leftHit(rd);
-			Vector2f mod_start_vec = modify_vector(m_ball_starting_dir[random]).normalized();
-			for (Observer* observer : observers) {
+			Vector2f mod_start_vec = modify_vector(m_ball_starting_dir[0]).normalized();
+			createEvent(RoundEndEvent::second_player_point);
+			reset(mod_start_vec);
+			/*for (Observer* observer : observers) {
 				observer->ballOut(this, mod_start_vec, Game::player::p_right);
-			}
+			}*/
 			return;
 		}
 		else if (normal.dot(right_wall_normal) > (1.f - EPS_3)) {
 			// send event to game
-			int random = rightHit(rd);
-			Vector2f mod_start_vec = modify_vector(m_ball_starting_dir[random]).normalized();
-			for (Observer* observer : observers) {
+			Vector2f mod_start_vec = modify_vector(m_ball_starting_dir[1]).normalized();
+			createEvent(RoundEndEvent::first_player_point);
+			reset(mod_start_vec);
+			/*for (Observer* observer : observers) {
 				observer->ballOut(this, mod_start_vec, Game::player::p_left);
-			}
+			}*/
 			return;
 		}
 	}
@@ -77,15 +79,15 @@ void Ball::onHit(const Vector2f& normal, const std::shared_ptr<IGameEntity> &ent
 	dynactor->set_velocity(reflected);
 }
 
-void Ball::addObserver(Observer* observer)
-{
-	observers.push_back(observer);
-}
-
-void Ball::removeObserver(Observer* observer)
-{
-	observers.pop_back();
-}
+//void Ball::addObserver(Observer* observer)
+//{
+//	observers.push_back(observer);
+//}
+//
+//void Ball::removeObserver(Observer* observer)
+//{
+//	observers.pop_back();
+//}
 
 void Ball::reset(const Vector2f& vel_dir) {
 
@@ -106,6 +108,12 @@ void Ball::reset(const Vector2f& vel_dir) {
 	velocity.y = y;
 
 	dynactor->set_velocity(velocity);
+}
+
+void Ball::createEvent(RoundEndEvent::event_type type)
+{
+	std::shared_ptr<IEvent> event = std::make_shared<RoundEndEvent>(type);
+	g_Game->create_event(event);
 }
 
 Vector2f Ball::modify_vector(Vector2f& vel)
