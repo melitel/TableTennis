@@ -56,12 +56,20 @@ public:
 		m_sectors.push_back(sector_id);
 	}
 
+	void swap_sectors(std::vector<int>& sector_id) {
+		m_sectors.swap(sector_id);
+	}
+
 	Vector2f get_hit_normal() const override{
 		return m_hit_normal;
 	}
 
 	const std::weak_ptr<IGameEntity>& get_owner() const override {
 		return m_owner;
+	}
+
+	std::vector<int>& get_sectors() {
+		return m_sectors;
 	}
 
 protected:

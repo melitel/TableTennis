@@ -1,7 +1,17 @@
 #include "Sector.h"
 #include "IPhysicActor.h"
 
-bool Sector::overlap(const BoundingBox& bb, 
+void Sector::delete_dynamic_actor(const std::shared_ptr<IPhysicActor>& actor)
+{
+    for (int i = 0; i < m_dynamic_actors.size(); i++) {
+        if (m_dynamic_actors[i] == actor) {
+            m_dynamic_actors[i].swap(m_dynamic_actors.back());
+            m_dynamic_actors.pop_back();
+        }
+    }
+}
+
+bool Sector::overlap(const BoundingBox& bb,
     const std::shared_ptr<IPhysicActor>& actor, 
     bool dynamic, bool stat,
     std::vector<std::shared_ptr<IPhysicActor>>& actors_hit)

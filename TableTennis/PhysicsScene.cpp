@@ -70,8 +70,51 @@ void PhysicsScene::collision_processing(const std::shared_ptr<IPhysicActor>& act
 	std::vector<std::shared_ptr<IPhysicActor>> actors_hit;
 	
 	if (dist_length < step) {
-		if (!g_Game->overlap(dynactor->get_bounds(p1), actor, true, true, actors_hit)) {
+		if (!overlap(dynactor->get_bounds(p1), actor, true, true, actors_hit)) {
+			std::vector<int> dActor_sectors = dynactor->get_sectors();
 			dynactor->set_position(p1);
+			std::vector<int> dActor_new_sectors = get_sector_from_bb(dynactor->get_bounds());
+			
+			for (int i = 0; i < dActor_sectors.size(); i++) {
+
+				bool sector_changed = false;
+
+					for (int j = 0; j < dActor_new_sectors.size(); j++) {
+
+						if (dActor_sectors[i] == dActor_new_sectors[j]) {
+							sector_changed = false;
+							break;
+						}
+						else {
+							sector_changed = true;
+						}						
+					}
+
+				if (sector_changed) {
+					m_sectors[i].delete_dynamic_actor(actor);
+				}
+			}
+
+			for (int i = 0; i < dActor_new_sectors.size(); i++) {
+				bool add_actor = false;
+
+					for (int j = 0; j < dActor_sectors.size(); j++) {
+
+						if (dActor_new_sectors[i] == dActor_sectors[j]) {
+							add_actor = false;
+							break;
+						}
+						else {
+							add_actor = true;
+						}						
+					}
+
+				if (add_actor) {
+					m_sectors[i].add_dynamic_actor(actor);
+				}
+			}
+
+			dynactor->swap_sectors(dActor_new_sectors);
 		}
 		else {
 			for (int i = 0; i < actors_hit.size(); i++) {
@@ -84,7 +127,7 @@ void PhysicsScene::collision_processing(const std::shared_ptr<IPhysicActor>& act
 		}
 	}
 	else {
-
+		assert(false);
 	}
 }
 

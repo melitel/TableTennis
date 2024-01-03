@@ -28,6 +28,8 @@ public:
 		m_dynamic_actors.push_back(actor);
 	}
 
+	void delete_dynamic_actor(const std::shared_ptr<IPhysicActor>& actor);
+
 	void add_static_actor(const std::shared_ptr<IPhysicActor>& actor) {
 		m_static_actors.push_back(actor);
 	}
