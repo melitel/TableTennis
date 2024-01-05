@@ -13,18 +13,22 @@ void InputManager::gather_input(std::unique_ptr<sf::RenderWindow>& window)
 	{
 		switch (event.type)
 		{
-		case sf::Event::KeyPressed: update_input_states(event.key.code, true); break;
-		case sf::Event::KeyReleased: update_input_states(event.key.code, false); break;
+		case sf::Event::KeyPressed: update_input_states(event.key.code, input_type::keyboard, true, sf::Vector2i(0, 0)); break;
+		case sf::Event::KeyReleased: update_input_states(event.key.code, input_type::keyboard, false, sf::Vector2i(0, 0)); break;
+		case sf::Event::MouseButtonReleased: 
+			sf::Vector2i pos = sf::Mouse::getPosition(*window);
+			update_input_states(event.mouseButton.button, input_type::mouse, true, pos); 
+			break;
 		}
 		// "close requested" event: we close the window
 		if (event.type == sf::Event::Closed)
 			window->close();
 	}
 
-	check_for_events();
+	check_for_keyboard_events();
 }
 
-void InputManager::check_for_events()
+void InputManager::check_for_keyboard_events()
 {
 	if (m_current_input_state[key_W] != m_previous_input_state[key_W])
 	{
@@ -100,7 +104,21 @@ void InputManager::check_for_events()
 		//pause Event	
 		createEvent(InputEvent::pause);
 	}
+}
 
+void InputManager::check_for_mouse_events(sf::Vector2i pos)
+{
+	sf::FloatRect btn1_bounds = g_Game->get_menu_button1_bounds();
+	sf::FloatRect btn2_bounds = g_Game->get_menu_button2_bounds();
+
+	if (btn1_bounds.contains(sf::Vector2f(pos)))
+	{
+		createEvent(InputEvent::playerVSplayer_start);
+	}
+	if (btn2_bounds.contains(sf::Vector2f(pos)))
+	{
+		createEvent(InputEvent::playerVSai_start);
+	}
 }
 
 void InputManager::createEvent(InputEvent::event_type type)
@@ -109,23 +127,38 @@ void InputManager::createEvent(InputEvent::event_type type)
 	g_Game->create_event(event);
 }
 
-void InputManager::update_input_states(sf::Keyboard::Key key, bool isPressed)
+void InputManager::update_input_states(std::variant<sf::Keyboard::Key, sf::Mouse::Button> input, 
+	input_type inputType, bool isPressed, sf::Vector2i pos)
 {
-	if (key == sf::Keyboard::W) {
-		m_current_input_state[key_W] = isPressed;
+	if (inputType == keyboard) {
+
+		sf::Keyboard::Key key = std::get<sf::Keyboard::Key>(input);
+
+		if (key == sf::Keyboard::W) {
+			m_current_input_state[key_W] = isPressed;
+		}
+		else if (key == sf::Keyboard::S) {
+			m_current_input_state[key_S] = isPressed;
+		}
+		else if (key == sf::Keyboard::Up) {
+			m_current_input_state[key_Up] = isPressed;
+		}
+		else if (key == sf::Keyboard::Down) {
+			m_current_input_state[key_Down] = isPressed;
+		}
+		else if (key == sf::Keyboard::Space) {
+			m_current_input_state[key_Pause] = isPressed;
+		}
 	}
-	else if (key == sf::Keyboard::S) {
-		m_current_input_state[key_S] = isPressed;
+	else if (inputType == mouse) {
+
+		sf::Mouse::Button button = std::get<sf::Mouse::Button>(input);		
+	
+		if (button == sf::Mouse::Left) {
+			check_for_mouse_events(pos);
+		}
 	}
-	else if (key == sf::Keyboard::Up) {
-		m_current_input_state[key_Up] = isPressed;
-	}
-	else if (key == sf::Keyboard::Down) {
-		m_current_input_state[key_Down] = isPressed;
-	}
-	else if (key == sf::Keyboard::Space) {
-		m_current_input_state[key_Pause] = isPressed;
-	}
+
 }
 
 

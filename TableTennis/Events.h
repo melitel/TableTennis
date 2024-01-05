@@ -13,7 +13,9 @@ public:
 		second_player_up,
 		second_player_stop,
 		second_player_down,
-		pause,
+		playerVSplayer_start,
+		playerVSai_start,
+		pause
 	};
 
 	InputEvent(event_type type) : m_event_type(type) { }

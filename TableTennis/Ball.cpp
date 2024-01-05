@@ -54,20 +54,14 @@ void Ball::onHit(const Vector2f& normal, const std::shared_ptr<IGameEntity> &ent
 			// send event to game
 			Vector2f mod_start_vec = modify_vector(m_ball_starting_dir[0]).normalized();
 			createEvent(RoundEndEvent::second_player_point);
-			reset(mod_start_vec);
-			/*for (Observer* observer : observers) {
-				observer->ballOut(this, mod_start_vec, Game::player::p_right);
-			}*/
+			reset(mod_start_vec);			
 			return;
 		}
 		else if (normal.dot(right_wall_normal) > (1.f - EPS_3)) {
 			// send event to game
 			Vector2f mod_start_vec = modify_vector(m_ball_starting_dir[1]).normalized();
 			createEvent(RoundEndEvent::first_player_point);
-			reset(mod_start_vec);
-			/*for (Observer* observer : observers) {
-				observer->ballOut(this, mod_start_vec, Game::player::p_left);
-			}*/
+			reset(mod_start_vec);			
 			return;
 		}
 	}
@@ -78,16 +72,6 @@ void Ball::onHit(const Vector2f& normal, const std::shared_ptr<IGameEntity> &ent
 	reflected = modify_vector(reflected);
 	dynactor->set_velocity(reflected);
 }
-
-//void Ball::addObserver(Observer* observer)
-//{
-//	observers.push_back(observer);
-//}
-//
-//void Ball::removeObserver(Observer* observer)
-//{
-//	observers.pop_back();
-//}
 
 void Ball::reset(const Vector2f& vel_dir) {
 

@@ -23,8 +23,6 @@ public:
 	virtual StaticEntity* asStaticEntity() { return nullptr; }
 	virtual void reset(const Vector2f& vel) = 0;
 	virtual entity_type get_entity_type() = 0;
-	//virtual void addObserver(Observer* observer) = 0;
-	//virtual void removeObserver(Observer* observer) = 0;
 	virtual ~IGameEntity() = default;
 };
 

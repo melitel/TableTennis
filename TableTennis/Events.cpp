@@ -28,6 +28,12 @@ void InputEvent::onEvent()
 	case pause:
 		g_Game->game_pause();
 		break;
+	case playerVSplayer_start:
+		g_Game->playerVSplayer_start();
+		break;
+	case playerVSai_start:
+		g_Game->playerVSai_start();
+		break;
 	default:
 		break;
 	}

@@ -93,10 +93,8 @@
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="IObserver.cpp" />
     <ClCompile Include="IPhysicActor.cpp" />
     <ClCompile Include="MovableEntity.cpp" />
-    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="Sector.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="IGameEntity.cpp" />
@@ -115,10 +113,8 @@
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="IEvent.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="IObserver.h" />
     <ClInclude Include="IPhysicActor.h" />
     <ClInclude Include="MovableEntity.h" />
-    <ClInclude Include="Observer.h" />
     <ClInclude Include="Sector.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="IGameEntity.h" />

@@ -24,18 +24,36 @@ void Game::initialize()
 	g_Game = this;
 	m_physics_scene = std::make_shared<PhysicsScene>();
 	m_window->setVerticalSyncEnabled(true);
+	m_game_status = game_status::pause;
+	m_game_regime = game_regime::menu;
+	
 	m_start_time = std::chrono::system_clock::now();
 	// clear the window with black color
 	m_window->clear(sf::Color::Black);
-	m_game_status = game_status::pause;
+
+	m_menu_button_1.setPosition(sf::Vector2f(175.f, 240.f));
+	m_menu_button_1.setSize(sf::Vector2f(350.f, 100.f));
+	m_menu_button_1.setFillColor(m_sprite_color);
+	m_menu_button_1_txt.setFont(m_font);
+	m_menu_button_1_txt.setCharacterSize(40);
+	m_menu_button_1_txt.setFillColor(sf::Color::Black);
+	m_menu_button_1_txt.setPosition(sf::Vector2f(200.f, 260.f));
+	m_menu_button_1_txt.setString(std::string ("Player Vs Player"));
+	m_menu_button_2.setPosition(sf::Vector2f(175.f, 360.f));
+	m_menu_button_2.setFillColor(m_sprite_color);
+	m_menu_button_2.setSize(sf::Vector2f(350.f, 100.f));
+	m_menu_button_2_txt.setFont(m_font);
+	m_menu_button_2_txt.setCharacterSize(40);
+	m_menu_button_2_txt.setFillColor(sf::Color::Black);
+	m_menu_button_2_txt.setPosition(sf::Vector2f(230.f, 380.f));
+	m_menu_button_2_txt.setString(std::string("Player Vs Ai"));
 
 	m_entities.emplace_back(std::make_shared<Player>(Vector2f(100.f, 340.f), 
 		m_entities.size(), GameEntity::entity_type::player, Player::player_type::left));
-	m_entities.emplace_back(std::make_shared<Player>(Vector2f(600.f, 340.f), 
-		m_entities.size(), GameEntity::entity_type::player, Player::player_type::right));
+	//m_entities.emplace_back(std::make_shared<Player>(Vector2f(600.f, 340.f), 
+	//	m_entities.size(), GameEntity::entity_type::player, Player::player_type::right));
 	m_entities.emplace_back(std::make_shared<Ball>(Vector2f(350.f, 400.f), m_entities.size(),
 		GameEntity::entity_type::ball));
-	//m_entities.back()->addObserver(&observer);
 	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 100.f), 
 		m_entities.size(), GameEntity::entity_type::wall, Wall::type::top));
 	m_entities.emplace_back(std::make_shared<Wall>(Vector2f(0.f, 698.f), 
@@ -49,7 +67,7 @@ void Game::initialize()
 		entity->initialize();
 	}
 
-	m_physics_scene->initialize(m_window_width, m_window_height);
+	//m_physics_scene->initialize(m_window_width, m_window_height);
 
 	if (!m_font.loadFromFile("arial.ttf"))
 	{
@@ -63,13 +81,34 @@ void Game::initialize()
 	m_score_text.setString(std::string("Score ") + std::to_string (m_player_score[p_left]) + " : " + std::to_string(m_player_score[p_right]));
 }
 
+void Game::player_vs_player_initialize()
+{
+	m_entities.emplace_back(std::make_shared<Player>(Vector2f(600.f, 340.f),
+		m_entities.size(), GameEntity::entity_type::player, Player::player_type::right));
+	m_entities.back()->initialize();
+	m_physics_scene->initialize(m_window_width, m_window_height);
+}
+
+void Game::player_vs_ai_initialize()
+{
+}
+
 void Game::draw()
 {	
 	m_window->clear();
-	for (auto& entity : m_entities) {
-		entity->draw(m_window);
+
+	if (m_game_regime == game_regime::menu) {
+		m_window->draw(m_menu_button_1);
+		m_window->draw(m_menu_button_1_txt);
+		m_window->draw(m_menu_button_2);
+		m_window->draw(m_menu_button_2_txt);
 	}
-	m_window->draw(m_score_text);
+	else {
+		for (auto& entity : m_entities) {
+			entity->draw(m_window);
+		}
+		m_window->draw(m_score_text);	
+	}
 	m_window->display();
 }
 
@@ -158,6 +197,17 @@ void Game::game_pause()
 	else {
 		m_game_status = game_status::pause;
 	}
+}
+
+void Game::playerVSplayer_start()
+{
+	m_game_regime = game_regime::playerVSplayer;
+	player_vs_player_initialize();
+}
+
+void Game::playerVSai_start()
+{
+	m_game_regime = game_regime::playerVSai;
 }
 
 void Game::add_score(Game::player player_score)
