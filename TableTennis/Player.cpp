@@ -7,6 +7,7 @@ extern Game* g_Game;
 void Player::initialize()
 {	
 	m_speed = 500.f;
+	isOfAiInterest = false;
 	m_player_shape.setSize(sf::Vector2f(m_player_width, m_player_height));
 	m_player_shape.setFillColor(m_sprite_color);
 	m_player_shape.setPosition(vec2sfml(m_position));

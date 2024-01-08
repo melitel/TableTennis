@@ -10,6 +10,7 @@ class InputManager
 public:
 	enum input { key_W, key_S, key_Up, key_Down, key_Pause, mouse_left, key_count };
 	using input_array = std::array<bool, key_count>;
+	using input_event = std::variant<sf::Keyboard::Key, sf::Mouse::Button>;
 	enum input_type {keyboard, mouse};
 
 	void gather_input(std::unique_ptr<sf::RenderWindow>& window);
@@ -28,6 +29,6 @@ private:
 	void createEvent(InputEvent::event_type type);
 	input_array m_current_input_state{ false };
 	input_array m_previous_input_state{ false };
-	void update_input_states(std::variant<sf::Keyboard::Key, sf::Mouse::Button> input, input_type inputType, bool isPressed, sf::Vector2i pos);
+	void update_input_states(input_event input, input_type inputType, bool isPressed, sf::Vector2i pos);
 };
 

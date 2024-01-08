@@ -6,6 +6,7 @@ extern Game* g_Game;
 
 void Wall::initialize()
 {
+	isOfAiInterest = false;
 	m_wall_shape.setFillColor(m_sprite_color);
 	m_wall_shape.setPosition(vec2sfml(m_position));
 	m_physicActor = g_Game->create_static_actor(m_entity_id);

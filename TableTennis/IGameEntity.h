@@ -23,6 +23,10 @@ public:
 	virtual StaticEntity* asStaticEntity() { return nullptr; }
 	virtual void reset(const Vector2f& vel) = 0;
 	virtual entity_type get_entity_type() = 0;
+	bool is_of_ai_interest() { return isOfAiInterest; }
 	virtual ~IGameEntity() = default;
+
+protected:
+	bool isOfAiInterest;
 };
 

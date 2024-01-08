@@ -58,7 +58,7 @@ const std::shared_ptr<IPhysicActor>& PhysicsScene::create_static_actor(const std
 	return m_static_actors.back();
 }
 
-void PhysicsScene::collision_processing(const std::shared_ptr<IPhysicActor>& actor, float delta) {
+void PhysicsScene::collision_processing(const std::shared_ptr<IPhysicActor>& actor, float delta) { 
 
 	DynamicActor* dynactor = (DynamicActor*)actor.get();
 	Vector2f p0 = dynactor->get_position();

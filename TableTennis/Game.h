@@ -4,6 +4,7 @@
 #include "IGameEntity.h"
 #include "GameEntity.h"
 #include "Player.h"
+#include "AiPlayer.h"
 #include "Ball.h"
 #include "Wall.h"
 #include "InputManager.h"

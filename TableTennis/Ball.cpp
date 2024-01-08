@@ -12,6 +12,7 @@ extern Game* g_Game;
 void Ball::initialize()
 {	
 	m_speed = 0.f;
+	isOfAiInterest = true;
 	int random = dist(rd);
 	m_ball_shape.setFillColor(m_sprite_color);
 	m_ball_shape.setRadius(m_ball_radius);

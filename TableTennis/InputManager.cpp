@@ -127,7 +127,7 @@ void InputManager::createEvent(InputEvent::event_type type)
 	g_Game->create_event(event);
 }
 
-void InputManager::update_input_states(std::variant<sf::Keyboard::Key, sf::Mouse::Button> input, 
+void InputManager::update_input_states(input_event input,
 	input_type inputType, bool isPressed, sf::Vector2i pos)
 {
 	if (inputType == keyboard) {

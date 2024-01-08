@@ -19,8 +19,6 @@ public:
 	void move(float delta, float round_time) override;
 	void set_position(Vector2f pos) { m_ball_shape.setPosition(vec2sfml(pos)); }
 	void onHit(const Vector2f& normal, const std::shared_ptr<IGameEntity>& entity_hit) override;
-	//void addObserver(Observer* observer) override;
-	//void removeObserver(Observer* observer) override;
 
 public:
 		
@@ -28,11 +26,10 @@ public:
 
 private:
 	void createEvent(RoundEndEvent::event_type type);
-	//std::vector<Observer*> observers;
 	sf::CircleShape m_ball_shape;
 	const float m_ball_radius = 7.f;
 	const float m_ball_speed_step = 10.f;
-	const float m_ball_starting_speed = 100.f;
+	const float m_ball_starting_speed = 500.f;
 	const Vector2f m_starting_position;
 	const uint32_t m_ball_speed_step_duration = 3;
 	std::vector<Vector2f> m_ball_starting_dir {		 

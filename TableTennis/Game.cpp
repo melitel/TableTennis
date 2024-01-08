@@ -91,6 +91,10 @@ void Game::player_vs_player_initialize()
 
 void Game::player_vs_ai_initialize()
 {
+	m_entities.emplace_back(std::make_shared<AiPlayer>(Vector2f(600.f, 340.f),
+		m_entities.size(), GameEntity::entity_type::player));
+	m_entities.back()->initialize();
+	m_physics_scene->initialize(m_window_width, m_window_height);
 }
 
 void Game::draw()
@@ -208,6 +212,7 @@ void Game::playerVSplayer_start()
 void Game::playerVSai_start()
 {
 	m_game_regime = game_regime::playerVSai;
+	player_vs_ai_initialize();
 }
 
 void Game::add_score(Game::player player_score)
