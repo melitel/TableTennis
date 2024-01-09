@@ -67,8 +67,6 @@ void Game::initialize()
 		entity->initialize();
 	}
 
-	//m_physics_scene->initialize(m_window_width, m_window_height);
-
 	if (!m_font.loadFromFile("arial.ttf"))
 	{
 		int ii = 10;
